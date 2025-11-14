@@ -1,0 +1,60 @@
+/* ========================================
+   SELLER LAYOUT WRAPPER
+======================================== */
+.seller-layout-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+
+/* ========================================
+   SELLER LAYOUT CONTENT
+======================================== */
+.seller-layout-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-x: hidden;
+  transition: margin 0.3s ease;
+}
+
+/* ========================================
+   RESPONSIVE STYLES
+======================================== */
+
+/* Mobile (< 992px) */
+@media (max-width: 991.98px) {
+  .seller-layout-content {
+    margin-left: 0;
+    padding: 5rem 1.5rem 2rem; /* Extra top padding for mobile menu button */
+    width: 100%;
+  }
+}
+
+/* Tablet (768px - 991px) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .seller-layout-content {
+    padding: 5rem 2rem 2rem;
+  }
+}
+
+/* Desktop (>= 992px) */
+@media (min-width: 992px) {
+  .seller-layout-content {
+    margin-left: 0;
+    padding: 2.5rem;
+  }
+}
+
+/* Large Desktop (>= 1400px) */
+@media (min-width: 1400px) {
+  .seller-layout-content {
+    padding: 3rem;
+  }
+}
+
+/* Small Mobile (< 576px) */
+@media (max-width: 575.98px) {
+  .seller-layout-content {
+    padding: 5rem 1rem 1.5rem;
+  }
+}

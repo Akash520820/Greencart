@@ -1,0 +1,138 @@
+/* ========================================
+   SELLER AUTH PAGE
+======================================== */
+.seller-auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem 1rem;
+}
+
+.seller-auth-container {
+  width: 100%;
+  max-width: 480px;
+  animation: slideIn 0.3s ease;
+}
+
+.seller-auth-content {
+  background: white;
+  border-radius: 12px;
+  padding: 2.5rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+/* ========================================
+   SELLER AUTH HEADER
+======================================== */
+.seller-auth-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.seller-auth-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0;
+  color: #2d3748;
+}
+
+.seller-auth-title .text-success {
+  color: #198754;
+}
+
+.seller-auth-back-btn {
+  background: none;
+  border: none;
+  font-size: 2.5rem;
+  color: #718096;
+  cursor: pointer;
+  padding: 0;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s, transform 0.2s;
+}
+
+.seller-auth-back-btn:hover {
+  color: #2d3748;
+  transform: scale(1.1);
+}
+
+/* ========================================
+   ERROR MESSAGE
+======================================== */
+.seller-auth-error {
+  background-color: #fee;
+  border: 1px solid #fcc;
+  color: #c33;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  animation: shake 0.3s ease;
+}
+
+/* ========================================
+   ANIMATIONS
+======================================== */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+/* ========================================
+   RESPONSIVE STYLES
+======================================== */
+
+/* Mobile (< 576px) */
+@media (max-width: 575.98px) {
+  .seller-auth-content {
+    padding: 1.5rem;
+  }
+  
+  .seller-auth-title {
+    font-size: 1.5rem;
+  }
+  
+  .seller-auth-page {
+    padding: 1rem;
+  }
+}
+
+/* Tablet (576px - 768px) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+  .seller-auth-content {
+    padding: 2rem;
+  }
+}
+
+/* Desktop (>= 768px) */
+@media (min-width: 768px) {
+  .seller-auth-page {
+    padding: 2rem;
+  }
+}

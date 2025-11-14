@@ -1,0 +1,240 @@
+/* Navbar Custom Styles */
+.navbar-container {
+  padding: 0.75rem 0;
+}
+
+/* Logo Styles */
+.navbar-logo {
+  height: 40px;
+  transition: height 0.3s ease;
+}
+
+/* Navbar Toggler Custom Size */
+.navbar-toggler {
+  padding: 0.25rem 0.4rem;
+  font-size: 0.875rem;
+  border-radius: 0.25rem;
+  border: 1px solid rgba(0,0,0,.1);
+}
+
+.navbar-toggler-icon {
+  width: 1em;
+  height: 1em;
+}
+
+.navbar-search-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 250px;
+}
+
+.navbar-search-input {
+  border-radius: 20px;
+  padding-right: 2.5rem;
+  border: 1px solid #dee2e6;
+  transition: all 0.3s ease;
+}
+
+.navbar-search-input:focus {
+  box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+  border-color: #198754;
+}
+
+.navbar-search-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+}
+
+.navbar-link {
+  padding: 0.5rem 1rem;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  font-weight: 500;
+  color: #6c757d;
+}
+
+.navbar-link:hover {
+  background-color: #f8f9fa;
+  color: #495057;
+}
+
+.navbar-link.active {
+  color: #198754 !important;
+  background-color: #e7f5ec;
+  font-weight: 600;
+}
+
+.navbar-login-btn {
+  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+  border-radius: 20px;
+  padding: 0.5rem 1.5rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.navbar-login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(25, 135, 84, 0.3);
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Desktop - Show cart and login next to search */
+.navbar-desktop-cart-login {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+/* Mobile - Hide this version */
+.navbar-mobile-cart-login {
+  display: none;
+}
+
+/* Mobile user display */
+.navbar-mobile-user-display {
+  display: none;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 991px) {
+  /* Smaller logo on mobile */
+  .navbar-logo {
+    height: 32px;
+  }
+  
+  /* Smaller toggle button - FIXED */
+  .navbar-toggler {
+    padding: 0.2rem 0.35rem;
+    font-size: 0.8rem;
+  }
+  
+  .navbar-toggler-icon {
+    width: 0.9em;
+    height: 0.9em;
+  }
+  
+  .navbar-search-wrapper {
+    max-width: 100%;
+    margin: 1rem 0;
+  }
+  
+  .navbar-actions {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+  
+  .navbar-link {
+    margin: 0.25rem 0;
+  }
+  
+  /* Hide desktop version on mobile */
+  .navbar-desktop-cart-login {
+    display: none;
+  }
+  
+  /* Show mobile version - CENTERED */
+  .navbar-mobile-cart-login {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  /* Show mobile user display */
+  .navbar-mobile-user-display {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+  }
+
+  .navbar-mobile-user-display .navbar-user-text {
+    font-weight: 500;
+    color: #2d3748;
+    font-size: 0.95rem;
+  }
+  
+  .navbar-login-btn {
+    padding: 0.5rem 1.25rem;
+  }
+}
+
+/* Tablet Styles */
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: 0.5rem 0;
+  }
+  
+  /* Even smaller logo on tablets */
+  .navbar-logo {
+    height: 30px;
+  }
+  
+  .navbar-search-input {
+    font-size: 0.9rem;
+  }
+  
+  /* Smaller toggle for tablets */
+  .navbar-toggler {
+    padding: 0.18rem 0.3rem;
+    font-size: 0.75rem;
+  }
+  
+  .navbar-toggler-icon {
+    width: 0.85em;
+    height: 0.85em;
+  }
+}
+
+/* Small Mobile Styles */
+@media (max-width: 576px) {
+  /* Smallest logo on small mobile */
+  .navbar-logo {
+    height: 28px;
+  }
+  
+  /* Even smaller toggle for small screens */
+  .navbar-toggler {
+    padding: 0.15rem 0.25rem;
+    font-size: 0.7rem;
+  }
+  
+  .navbar-toggler-icon {
+    width: 0.8em;
+    height: 0.8em;
+  }
+  
+  .navbar-mobile-cart-login {
+    flex-direction: row;
+    gap: 0.75rem;
+    justify-content: center;
+  }
+  
+  .navbar-login-btn {
+    padding: 0.45rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .navbar-mobile-user-display .navbar-user-text {
+    font-size: 0.9rem;
+  }
+}

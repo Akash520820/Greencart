@@ -1,0 +1,121 @@
+import React, { useState, useEffect, memo } from 'react';
+import { useCart } from '../../context/CartContext';
+import './ProductCard.css';
+
+const ProductCard = memo(({ product }) => {
+  const { addToCart, cartItems } = useCart();
+  const [isAdding, setIsAdding] = useState(false);
+  const [isInCart, setIsInCart] = useState(false);
+
+  // Check if product is in cart
+  useEffect(() => {
+    const inCart = cartItems.some(item => item._id === product._id);
+    setIsInCart(inCart);
+  }, [cartItems, product._id]);
+
+  const handleAddToCart = () => {
+    if (isInCart) return; // Don't add if already in cart
+    
+    setIsAdding(true);
+    addToCart(product);
+    
+    // Reset button state after animation
+    setTimeout(() => {
+      setIsAdding(false);
+    }, 600);
+  };
+
+  const discountPercentage = product.offerPrice 
+    ? Math.round(((product.price - product.offerPrice) / product.price) * 100)
+    : 0;
+
+  return (
+    <div className="product-card-bestseller">
+      <div className="product-card-image-container">
+        <img 
+          src={product.image[0]} 
+          alt={product.name} 
+          className="product-card-image"
+        />
+        {discountPercentage > 0 && (
+          <span className="product-card-discount-badge">
+            {discountPercentage}% OFF
+          </span>
+        )}
+        {isInCart && (
+          <div className="product-card-in-cart-badge">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+            </svg>
+            Added
+          </div>
+        )}
+      </div>
+      
+      <div className="product-card-content">
+        <p className="product-card-category">{product.category}</p>
+        <h3 className="product-card-name">{product.name}</h3>
+        
+        {/* Star Rating */}
+        <div className="product-card-rating">
+          {[...Array(4)].map((_, index) => (
+            <svg 
+              key={index} 
+              width="16" 
+              height="16" 
+              viewBox="0 0 24 24" 
+              fill="#48bb78"
+            >
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          ))}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#e2e8f0">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+          <span className="product-card-rating-count">(4)</span>
+        </div>
+        
+        <div className="product-card-footer">
+          <div className="product-card-pricing">
+            {product.offerPrice ? (
+              <>
+                <span className="product-card-price-offer">₹{product.offerPrice}</span>
+                <span className="product-card-price-original">₹{product.price}</span>
+              </>
+            ) : (
+              <span className="product-card-price-offer">₹{product.price}</span>
+            )}
+          </div>
+          
+          <button 
+            className={`product-card-add-btn ${isAdding ? 'adding' : ''} ${isInCart ? 'in-cart' : ''}`}
+            onClick={handleAddToCart}
+            disabled={isAdding || isInCart}
+          >
+            {isInCart ? (
+              <>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                </svg>
+                Added
+              </>
+            ) : (
+              <>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="9" cy="21" r="1"/>
+                  <circle cx="20" cy="21" r="1"/>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                </svg>
+                {isAdding ? 'Adding...' : 'Add'}
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+ProductCard.displayName = 'ProductCard';
+
+export default ProductCard;
