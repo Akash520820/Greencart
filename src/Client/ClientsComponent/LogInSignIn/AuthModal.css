@@ -7,7 +7,8 @@
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 1040;
-  animation: fadeIn 0.3s ease;
+  backdrop-filter: blur(4px);
+  animation: fadeInBackdrop 0.3s ease forwards;
 }
 
 /* Modal Container */
@@ -17,16 +18,17 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1050;
-  animation: slideIn 0.3s ease;
+  animation: slideInModal 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .auth-modal-content {
   background: white;
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 2rem;
   width: 90vw;
   max-width: 420px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  position: relative;
 }
 
 /* Header */
@@ -56,11 +58,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s;
+  transition: all 0.3s ease;
+  border-radius: 50%;
 }
 
 .auth-modal-header-close-btn:hover {
   color: #2d3748;
+  background-color: #f7fafc;
+  transform: rotate(90deg);
 }
 
 /* Form Groups */
@@ -82,7 +87,7 @@
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   font-size: 0.95rem;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
 }
 
 .auth-form-input::placeholder {
@@ -93,6 +98,7 @@
   outline: none;
   border-color: #198754;
   box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.1);
+  transform: translateY(-2px);
 }
 
 /* Toggle Text */
@@ -111,7 +117,8 @@
   padding: 0;
   font-size: 0.9rem;
   text-decoration: none;
-  transition: color 0.2s;
+  transition: all 0.2s ease;
+  font-weight: 600;
 }
 
 .auth-form-toggle-link:hover {
@@ -123,28 +130,30 @@
 .auth-form-submit-btn {
   width: 100%;
   padding: 0.875rem;
-  background-color: #198754;
+  background: linear-gradient(135deg, #198754, #146c43);
   color: white;
   border: none;
   border-radius: 8px;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(25, 135, 84, 0.2);
 }
 
 .auth-form-submit-btn:hover {
-  background-color: #146c43;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(25, 135, 84, 0.3);
+  background: linear-gradient(135deg, #146c43, #0f5132);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(25, 135, 84, 0.4);
 }
 
 .auth-form-submit-btn:active {
-  transform: translateY(0);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(25, 135, 84, 0.3);
 }
 
 /* Animations */
-@keyframes fadeIn {
+@keyframes fadeInBackdrop {
   from {
     opacity: 0;
   }
@@ -153,15 +162,28 @@
   }
 }
 
-@keyframes slideIn {
+@keyframes slideInModal {
   from {
     opacity: 0;
-    transform: translate(-50%, -48%);
+    transform: translate(-50%, -50%) scale(0.9);
   }
   to {
     opacity: 1;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(1);
   }
+}
+
+/* Loading state */
+.auth-form-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(25, 135, 84, 0.2);
+}
+
+.auth-form-submit-btn:disabled:hover {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(25, 135, 84, 0.2);
 }
 
 /* Responsive */
@@ -169,9 +191,52 @@
   .auth-modal-content {
     padding: 1.5rem;
     max-width: 95vw;
+    border-radius: 12px;
   }
   
   .auth-modal-header-title {
     font-size: 1.25rem;
+  }
+  
+  .auth-form-input {
+    padding: 0.65rem 0.875rem;
+    font-size: 0.9rem;
+  }
+  
+  .auth-form-submit-btn {
+    padding: 0.75rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* Focus states */
+.auth-form-input:focus-visible {
+  outline: 2px solid #198754;
+  outline-offset: 2px;
+}
+
+/* Accessibility - Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .auth-modal-backdrop,
+  .auth-modal-container,
+  .auth-modal-content,
+  .auth-modal-header-title,
+  .auth-form-input-group,
+  .auth-form-toggle-text,
+  .auth-form-submit-btn {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .auth-form-input:focus {
+    transform: none;
+  }
+  
+  .auth-form-submit-btn:hover {
+    transform: none;
+  }
+  
+  .auth-modal-header-close-btn:hover {
+    transform: none;
   }
 }

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { IoHome } from "react-icons/io5";
 import { AiFillProduct } from "react-icons/ai";
 import { BsCartFill } from "react-icons/bs";
@@ -7,15 +7,21 @@ import { IoBag } from "react-icons/io5";
 import { MdAccountCircle } from "react-icons/md";
 import { useCart } from '../../../context/CartContext';
 import { useClientAuth } from '../../../context/ClientAuthContext';
+import AuthModal from '../LogInSignIn/AuthModal';
 import './BottomNavbar.css';
 
 const BottomNavbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { getTotalItems } = useCart();
   const { isAuthenticated, user, logout } = useClientAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [pendingRedirect, setPendingRedirect] = useState(null);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const dropdownRef = useRef(null);
   const cartCount = getTotalItems();
+  const wasAuthenticatedRef = useRef(isAuthenticated);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -29,17 +35,60 @@ const BottomNavbar = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Handle redirect after successful login
+  useEffect(() => {
+    // Only trigger redirect when authentication state changes from false to true
+    if (!wasAuthenticatedRef.current && isAuthenticated && pendingRedirect) {
+      setIsRedirecting(true);
+      
+      // Close modal first
+      setShowAuthModal(false);
+      
+      // Show loading overlay and redirect
+      setTimeout(() => {
+        navigate(pendingRedirect, { replace: true });
+        setPendingRedirect(null);
+        setIsRedirecting(false);
+      }, 500);
+    }
+    
+    // Update the ref
+    wasAuthenticatedRef.current = isAuthenticated;
+  }, [isAuthenticated, pendingRedirect, navigate]);
+
   const isActive = (path) => {
     return location.pathname === path;
   };
 
   const handleUserClick = () => {
-    setShowUserMenu(!showUserMenu);
+    if (!isAuthenticated) {
+      setPendingRedirect(null);
+      setTimeout(() => setShowAuthModal(true), 100);
+    } else {
+      setShowUserMenu(!showUserMenu);
+    }
+  };
+
+  const handleOrdersClick = (e) => {
+    if (!isAuthenticated) {
+      e.preventDefault();
+      setPendingRedirect('/my-orders');
+      setTimeout(() => setShowAuthModal(true), 100);
+    }
   };
 
   const handleLogout = () => {
     logout();
     setShowUserMenu(false);
+  };
+
+  const handleCloseAuthModal = () => {
+    setShowAuthModal(false);
+    setTimeout(() => {
+      if (!isAuthenticated) {
+        setPendingRedirect(null);
+      }
+    }, 300);
   };
 
   return (
@@ -50,6 +99,14 @@ const BottomNavbar = () => {
           className={`bottom-navbar-backdrop ${showUserMenu ? 'show' : ''}`}
           onClick={() => setShowUserMenu(false)}
         />
+      )}
+
+      {/* Page Transition Overlay */}
+      {isRedirecting && (
+        <div className="page-transition-overlay active">
+          <div className="page-transition-spinner"></div>
+          <p className="page-transition-text">Redirecting...</p>
+        </div>
       )}
 
       <nav className="bottom-navbar">
@@ -90,34 +147,17 @@ const BottomNavbar = () => {
             <span className="bottom-navbar-label">Cart</span>
           </Link>
 
-          {/* My Orders (Show only if authenticated) */}
-          {isAuthenticated ? (
-            <Link 
-              to="/my-orders" 
-              className={`bottom-navbar-item ${isActive('/my-orders') ? 'active' : ''}`}
-            >
-              <div className="bottom-navbar-icon-wrapper">
-                <IoBag className="bottom-navbar-icon" />
-              </div>
-              <span className="bottom-navbar-label">Orders</span>
-            </Link>
-          ) : (
-            <Link 
-              to="/Contact" 
-              className={`bottom-navbar-item ${isActive('/Contact') ? 'active' : ''}`}
-            >
-              <div className="bottom-navbar-icon-wrapper">
-                <svg 
-                  className="bottom-navbar-icon" 
-                  viewBox="0 0 24 24" 
-                  fill="currentColor"
-                >
-                  <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-                </svg>
-              </div>
-              <span className="bottom-navbar-label">Contact</span>
-            </Link>
-          )}
+          {/* My Orders - Always visible, shows auth modal if not authenticated */}
+          <Link 
+            to="/my-orders" 
+            className={`bottom-navbar-item ${isActive('/my-orders') ? 'active' : ''}`}
+            onClick={handleOrdersClick}
+          >
+            <div className="bottom-navbar-icon-wrapper">
+              <IoBag className="bottom-navbar-icon" />
+            </div>
+            <span className="bottom-navbar-label">Orders</span>
+          </Link>
 
           {/* Account / User */}
           <div className="bottom-navbar-user-dropdown" ref={dropdownRef}>
@@ -133,7 +173,7 @@ const BottomNavbar = () => {
               </span>
             </button>
 
-            {/* User Dropdown Menu */}
+            {/* User Dropdown Menu - Only show when authenticated */}
             {showUserMenu && isAuthenticated && (
               <div className={`bottom-navbar-user-menu ${showUserMenu ? 'show' : ''}`}>
                 <div className="bottom-navbar-user-header">
@@ -164,6 +204,9 @@ const BottomNavbar = () => {
           </div>
         </div>
       </nav>
+
+      {/* Auth Modal */}
+      <AuthModal show={showAuthModal} onClose={handleCloseAuthModal} />
     </>
   );
 };

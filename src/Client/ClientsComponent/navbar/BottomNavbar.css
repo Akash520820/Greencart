@@ -303,6 +303,56 @@
 }
 
 /* ========================================
+   PAGE TRANSITION OVERLAY
+======================================== */
+
+.page-transition-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  backdrop-filter: blur(8px);
+}
+
+.page-transition-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.page-transition-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #e2e8f0;
+  border-top-color: #4CAF50;
+  border-radius: 50%;
+  animation: spinLoader 0.8s linear infinite;
+}
+
+@keyframes spinLoader {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.page-transition-text {
+  margin-top: 1rem;
+  color: #2d3748;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+}
+
+/* ========================================
    RESPONSIVE DESIGN
 ======================================== */
 
@@ -583,6 +633,14 @@
   .bottom-navbar-backdrop {
     background: rgba(0, 0, 0, 0.7);
   }
+  
+  .page-transition-overlay {
+    background: rgba(26, 26, 26, 0.95);
+  }
+  
+  .page-transition-text {
+    color: #e2e8f0;
+  }
 }
 
 /* ========================================
@@ -602,7 +660,9 @@
   .bottom-navbar-icon,
   .bottom-navbar-label,
   .bottom-navbar-user-menu,
-  .bottom-navbar-backdrop {
+  .bottom-navbar-backdrop,
+  .page-transition-overlay,
+  .page-transition-spinner {
     transition: none;
     animation: none;
   }

@@ -68,6 +68,7 @@ const Navbar = () => {
                 >
                   All Product
                 </Link>
+                
               </li>
               <li className="nav-item">
                 <Link 
