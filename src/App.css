@@ -1,0 +1,25 @@
+/* Add this to your existing App.css file */
+
+/* Desktop - No bottom padding needed */
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Mobile - Add padding to prevent content being hidden behind bottom nav */
+@media (max-width: 991px) {
+  body {
+    padding-bottom: 70px;
+  }
+  
+  /* Ensure main content doesn't get cut off */
+  main {
+    min-height: calc(100vh - 140px);
+  }
+}
+
+@media (max-width: 576px) {
+  body {
+    padding-bottom: 65px;
+  }
+}

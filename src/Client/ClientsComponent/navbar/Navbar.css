@@ -36,8 +36,8 @@
 }
 
 .navbar-search-input:focus {
-  box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
-  border-color: #198754;
+  box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25);
+  border-color: #4CAF50;
 }
 
 .navbar-search-btn {
@@ -65,7 +65,7 @@
 }
 
 .navbar-link.active {
-  color: #198754 !important;
+  color: #4CAF50 !important;
   background-color: #e7f5ec;
   font-weight: 600;
 }
@@ -81,7 +81,7 @@
 
 .navbar-login-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(25, 135, 84, 0.3);
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
 }
 
 .navbar-actions {
@@ -109,72 +109,38 @@
 
 /* Mobile Responsive Styles */
 @media (max-width: 991px) {
+  /* Hide the hamburger toggler */
+  .navbar-toggler {
+    display: none !important;
+  }
+  
+  /* Hide the entire navbar menu on mobile */
+  .navbar-collapse {
+    display: none !important;
+  }
+  
+  /* Keep navbar simple on mobile - just logo and search */
+  .navbar-container .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
   /* Smaller logo on mobile */
   .navbar-logo {
     height: 32px;
   }
   
-  /* Smaller toggle button - FIXED */
-  .navbar-toggler {
-    padding: 0.2rem 0.35rem;
-    font-size: 0.8rem;
-  }
-  
-  .navbar-toggler-icon {
-    width: 0.9em;
-    height: 0.9em;
-  }
-  
+  /* Make search wrapper take available space */
   .navbar-search-wrapper {
     max-width: 100%;
-    margin: 1rem 0;
+    flex: 1;
+    margin: 0 1rem;
   }
   
-  .navbar-actions {
-    flex-direction: column;
-    align-items: stretch;
+  .navbar-search-input {
     width: 100%;
-  }
-  
-  .navbar-link {
-    margin: 0.25rem 0;
-  }
-  
-  /* Hide desktop version on mobile */
-  .navbar-desktop-cart-login {
-    display: none;
-  }
-  
-  /* Show mobile version - CENTERED */
-  .navbar-mobile-cart-login {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-  }
-  
-  /* Show mobile user display */
-  .navbar-mobile-user-display {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    justify-content: center;
-    padding: 0.5rem 1rem;
-    background-color: #f8f9fa;
-    border-radius: 12px;
-    margin-bottom: 1rem;
-  }
-
-  .navbar-mobile-user-display .navbar-user-text {
-    font-weight: 500;
-    color: #2d3748;
-    font-size: 0.95rem;
-  }
-  
-  .navbar-login-btn {
-    padding: 0.5rem 1.25rem;
+    font-size: 0.9rem;
   }
 }
 
@@ -184,57 +150,36 @@
     padding: 0.5rem 0;
   }
   
-  /* Even smaller logo on tablets */
   .navbar-logo {
     height: 30px;
   }
   
-  .navbar-search-input {
-    font-size: 0.9rem;
-  }
-  
-  /* Smaller toggle for tablets */
-  .navbar-toggler {
-    padding: 0.18rem 0.3rem;
-    font-size: 0.75rem;
-  }
-  
-  .navbar-toggler-icon {
-    width: 0.85em;
-    height: 0.85em;
+  .navbar-search-wrapper {
+    margin: 0 0.75rem;
   }
 }
 
 /* Small Mobile Styles */
 @media (max-width: 576px) {
-  /* Smallest logo on small mobile */
   .navbar-logo {
     height: 28px;
   }
   
-  /* Even smaller toggle for small screens */
-  .navbar-toggler {
-    padding: 0.15rem 0.25rem;
-    font-size: 0.7rem;
+  .navbar-search-wrapper {
+    margin: 0 0.5rem;
   }
   
-  .navbar-toggler-icon {
-    width: 0.8em;
-    height: 0.8em;
+  .navbar-search-input {
+    font-size: 0.85rem;
+    padding: 0.4rem 2rem 0.4rem 0.75rem;
   }
   
-  .navbar-mobile-cart-login {
-    flex-direction: row;
-    gap: 0.75rem;
-    justify-content: center;
+  .navbar-search-btn {
+    right: 5px;
   }
   
-  .navbar-login-btn {
-    padding: 0.45rem 1rem;
-    font-size: 0.9rem;
-  }
-
-  .navbar-mobile-user-display .navbar-user-text {
-    font-size: 0.9rem;
+  .navbar-search-btn svg {
+    width: 20px;
+    height: 20px;
   }
 }
