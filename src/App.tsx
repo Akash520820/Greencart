@@ -12,6 +12,7 @@ import Home from './Client/ClientPages/Home';
 import AllProduct from './Client/ClientPages/AllProducts';
 import Contact from './Client/ClientPages/Contact';
 import MyOrders from './Client/ClientPages/MyOrders';
+import Cart from './Client/ClientPages/Cart';
 
 // Seller Layout & Pages
 import SellerAppLayout from './Seller/SellerComponent/Layout/SellerAppLayout';
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
       {
         path: "/AllProduct",
         element: <AllProduct />,
+      },
+      {
+        path: "/cart",
+        element: <Cart />,
       },
       {
         path: "/Contact",
