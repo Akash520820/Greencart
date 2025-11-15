@@ -11,6 +11,7 @@ import SearchBar from "./SearchBar";
 const Navbar = () => {
   const location = useLocation();
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [pendingRedirect, setPendingRedirect] = useState(null);
   const { isAuthenticated } = useClientAuth();
 
   const isActive = (path) => {
@@ -18,11 +19,26 @@ const Navbar = () => {
   };
 
   const handleLoginClick = () => {
+    setPendingRedirect(null);
     setShowAuthModal(true);
+  };
+
+  const handleMyOrdersClick = (e) => {
+    if (!isAuthenticated) {
+      e.preventDefault();
+      setPendingRedirect('/my-orders');
+      setShowAuthModal(true);
+    }
   };
 
   const handleCloseModal = () => {
     setShowAuthModal(false);
+    // Clear pending redirect after modal closes if user didn't authenticate
+    setTimeout(() => {
+      if (!isAuthenticated) {
+        setPendingRedirect(null);
+      }
+    }, 300);
   };
 
   return (
@@ -68,7 +84,16 @@ const Navbar = () => {
                 >
                   All Product
                 </Link>
-                
+              </li>
+              {/* MyOrders Link - Always visible, shows auth modal if not authenticated */}
+              <li className="nav-item">
+                <Link 
+                  className={`nav-link navbar-link ${isActive('/my-orders') ? 'active' : ''}`} 
+                  to="/my-orders"
+                  onClick={handleMyOrdersClick}
+                >
+                  My Orders
+                </Link>
               </li>
               <li className="nav-item">
                 <Link 
@@ -102,7 +127,11 @@ const Navbar = () => {
         </div>
       </nav>
 
-      <AuthModal show={showAuthModal} onClose={handleCloseModal} />
+      <AuthModal 
+        show={showAuthModal} 
+        onClose={handleCloseModal}
+        redirectTo={pendingRedirect}
+      />
     </>
   );
 };

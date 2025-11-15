@@ -119,6 +119,7 @@
     font-size: 1.75rem;
     margin-bottom: 25px;
     line-height: 1.4;
+    text-align: center;
   }
   
   .MainBannerRow {
@@ -128,12 +129,16 @@
   .MainBannerContent {
     padding: 30px 15px;
     text-align: center;
+    align-items: center;
+    width: 100%;
   }
   
   .MainBannerButtons {
     justify-content: center;
     flex-direction: column;
+    align-items: center;
     gap: 12px;
+    width: 100%;
   }
   
   .MainBannerButtonPrimary,
@@ -142,6 +147,8 @@
     max-width: 280px;
     padding: 14px 25px;
     font-size: 0.95rem;
+    display: block;
+    margin: 0 auto;
   }
 }
 
@@ -155,15 +162,26 @@
   .MainBannerHeading {
     font-size: 1.5rem;
     margin-bottom: 20px;
+    text-align: center;
   }
   
   .MainBannerContent {
     padding: 25px 10px;
+    align-items: center;
+  }
+  
+  .MainBannerButtons {
+    width: 100%;
+    align-items: center;
   }
   
   .MainBannerButtonPrimary,
   .MainBannerButtonSecondary {
     padding: 12px 20px;
     font-size: 0.9rem;
+    width: 100%;
+    max-width: 280px;
+    display: block;
+    margin: 0 auto;
   }
 }
