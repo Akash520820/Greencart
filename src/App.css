@@ -5,6 +5,9 @@ body {
   margin: 0;
   padding: 0;
 }
+#root {
+  min-height: 100vh;
+}
 
 /* Mobile - Add padding to prevent content being hidden behind bottom nav */
 @media (max-width: 991px) {

@@ -1,11 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
+import { useClientAuth } from '../../context/ClientAuthContext';
+import AuthModal from '../ClientsComponent/LogInSignIn/AuthModal';
 import './Cart.css';
 
 const Cart = () => {
   const navigate = useNavigate();
   const { cartItems, updateQuantity, removeFromCart, getTotalPrice, clearCart } = useCart();
+  const { isAuthenticated } = useClientAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  // Check authentication on component mount
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+    }
+  }, [isAuthenticated]);
+
+  const handleCloseModal = () => {
+    setShowAuthModal(false);
+    // If user closes modal without logging in, redirect to home
+    if (!isAuthenticated) {
+      navigate('/', { replace: true });
+    }
+  };
 
   const handleQuantityChange = (productId, newQuantity) => {
     if (newQuantity < 1) return;
@@ -24,6 +43,27 @@ const Cart = () => {
     // You can implement checkout logic here
     alert('Checkout functionality will be implemented');
   };
+
+  // Don't render cart content until authenticated
+  if (!isAuthenticated) {
+    return (
+      <>
+        <AuthModal 
+          show={showAuthModal} 
+          onClose={handleCloseModal}
+          redirectTo="/cart"
+        />
+        <div className="cart-page">
+          <div className="container">
+            <div className="cart-auth-loading">
+              <div className="spinner"></div>
+              <p>Please login to view your cart...</p>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   if (cartItems.length === 0) {
     return (

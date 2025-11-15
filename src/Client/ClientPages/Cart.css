@@ -8,6 +8,39 @@
 }
 
 /* ========================================
+   AUTH LOADING STATE
+======================================== */
+.cart-auth-loading {
+  text-align: center;
+  padding: 100px 20px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.cart-auth-loading .spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #e2e8f0;
+  border-top-color: #4CAF50;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 20px auto;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.cart-auth-loading p {
+  font-size: 1rem;
+  color: #718096;
+  margin: 0;
+}
+
+/* ========================================
    CART HEADER
 ======================================== */
 .cart-header {

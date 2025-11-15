@@ -69,6 +69,14 @@ const BottomNavbar = () => {
     }
   };
 
+  const handleCartClick = (e) => {
+    if (!isAuthenticated) {
+      e.preventDefault();
+      setPendingRedirect('/cart');
+      setTimeout(() => setShowAuthModal(true), 100);
+    }
+  };
+
   const handleOrdersClick = (e) => {
     if (!isAuthenticated) {
       e.preventDefault();
@@ -133,10 +141,11 @@ const BottomNavbar = () => {
             <span className="bottom-navbar-label">Products</span>
           </Link>
 
-          {/* Cart (Center - Featured) */}
+          {/* Cart (Center - Featured) - Now requires login */}
           <Link 
             to="/cart" 
             className={`bottom-navbar-item ${isActive('/cart') ? 'active' : ''}`}
+            onClick={handleCartClick}
           >
             <div className="bottom-navbar-icon-wrapper">
               <BsCartFill className="bottom-navbar-icon" />
@@ -206,7 +215,11 @@ const BottomNavbar = () => {
       </nav>
 
       {/* Auth Modal */}
-      <AuthModal show={showAuthModal} onClose={handleCloseAuthModal} />
+      <AuthModal 
+        show={showAuthModal} 
+        onClose={handleCloseAuthModal}
+        redirectTo={pendingRedirect}
+      />
     </>
   );
 };

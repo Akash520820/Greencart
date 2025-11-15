@@ -31,6 +31,12 @@ export const ClientAuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('clientUser');
+    
+    // Clear cart on logout
+    localStorage.removeItem('cartItems');
+    
+    // Dispatch custom event to notify cart context
+    window.dispatchEvent(new Event('cartClear'));
   };
 
   const value = {

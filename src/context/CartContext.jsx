@@ -26,6 +26,20 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
   }, [cartItems]);
 
+  // Listen for cart clear event (triggered on logout)
+  useEffect(() => {
+    const handleCartClear = () => {
+      setCartItems([]);
+      localStorage.removeItem('cartItems');
+    };
+
+    window.addEventListener('cartClear', handleCartClear);
+    
+    return () => {
+      window.removeEventListener('cartClear', handleCartClear);
+    };
+  }, []);
+
   // Add item to cart
   const addToCart = (product) => {
     setCartItems(prevItems => {
@@ -67,6 +81,7 @@ export const CartProvider = ({ children }) => {
   // Clear entire cart
   const clearCart = () => {
     setCartItems([]);
+    localStorage.removeItem('cartItems');
   };
 
   // Get total items count
