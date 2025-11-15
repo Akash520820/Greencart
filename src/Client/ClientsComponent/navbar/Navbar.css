@@ -22,35 +22,6 @@
   height: 1em;
 }
 
-.navbar-search-wrapper {
-  position: relative;
-  width: 100%;
-  max-width: 250px;
-}
-
-.navbar-search-input {
-  border-radius: 20px;
-  padding-right: 2.5rem;
-  border: 1px solid #dee2e6;
-  transition: all 0.3s ease;
-}
-
-.navbar-search-input:focus {
-  box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25);
-  border-color: #4CAF50;
-}
-
-.navbar-search-btn {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: transparent;
-  border: none;
-  padding: 0.25rem 0.5rem;
-  cursor: pointer;
-}
-
 .navbar-link {
   padding: 0.5rem 1rem;
   transition: all 0.3s ease;
@@ -107,79 +78,75 @@
   display: none;
 }
 
-/* Mobile Responsive Styles */
-@media (max-width: 991px) {
-  /* Hide the hamburger toggler */
-  .navbar-toggler {
-    display: none !important;
+/* Mobile Responsive Styles - Show only logo on mobile (below 768px) */
+@media (max-width: 767px) {
+  /* Keep navbar visible but minimal */
+  .navbar-container {
+    display: block !important;
+    padding: 0.5rem 0;
   }
   
-  /* Hide the entire navbar menu on mobile */
-  .navbar-collapse {
-    display: none !important;
+  /* Show only the logo - centered */
+  .navbar-brand {
+    display: flex !important;
+    margin: 0 auto !important;
   }
   
-  /* Keep navbar simple on mobile - just logo and search */
-  .navbar-container .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  /* Smaller logo on mobile */
   .navbar-logo {
     height: 32px;
   }
   
-  /* Make search wrapper take available space */
-  .navbar-search-wrapper {
-    max-width: 100%;
-    flex: 1;
-    margin: 0 1rem;
+  /* Hide hamburger toggle */
+  .navbar-toggler {
+    display: none !important;
   }
   
-  .navbar-search-input {
-    width: 100%;
+  /* Hide navbar menu */
+  .navbar-collapse {
+    display: none !important;
+  }
+  
+  /* Center align the container */
+  .navbar-container .container {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+  
+  /* Force hide all other navbar elements */
+  .navbar-actions,
+  .navbar-desktop-cart-login,
+  .navbar-nav {
+    display: none !important;
+    visibility: hidden !important;
+  }
+}
+
+/* Tablet Styles (768px - 991px) - Keep navbar visible */
+@media (max-width: 991px) and (min-width: 768px) {
+  .navbar-container {
+    display: block !important;
+    padding: 0.6rem 0;
+  }
+  
+  .navbar-logo {
+    height: 35px;
+  }
+  
+  .navbar-link {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+  
+  .navbar-login-btn {
+    padding: 0.4rem 1.2rem;
     font-size: 0.9rem;
   }
 }
 
-/* Tablet Styles */
-@media (max-width: 768px) {
+/* Large Desktop */
+@media (min-width: 992px) {
   .navbar-container {
-    padding: 0.5rem 0;
-  }
-  
-  .navbar-logo {
-    height: 30px;
-  }
-  
-  .navbar-search-wrapper {
-    margin: 0 0.75rem;
-  }
-}
-
-/* Small Mobile Styles */
-@media (max-width: 576px) {
-  .navbar-logo {
-    height: 28px;
-  }
-  
-  .navbar-search-wrapper {
-    margin: 0 0.5rem;
-  }
-  
-  .navbar-search-input {
-    font-size: 0.85rem;
-    padding: 0.4rem 2rem 0.4rem 0.75rem;
-  }
-  
-  .navbar-search-btn {
-    right: 5px;
-  }
-  
-  .navbar-search-btn svg {
-    width: 20px;
-    height: 20px;
+    padding: 0.75rem 0;
   }
 }

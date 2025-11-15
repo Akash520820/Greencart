@@ -10,7 +10,7 @@
   right: 0;
   background: linear-gradient(to top, #ffffff 0%, #fafafa 100%);
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
-  padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+  padding: 4px 0 max(4px, env(safe-area-inset-bottom));
   z-index: 1040;
   border-top: 1px solid #e2e8f0;
   backdrop-filter: blur(10px);
@@ -22,7 +22,7 @@
   align-items: center;
   max-width: 100%;
   margin: 0 auto;
-  padding: 0 8px;
+  padding: 0 4px;
 }
 
 .bottom-navbar-item {
@@ -35,8 +35,8 @@
   background: none;
   border: none;
   cursor: pointer;
-  padding: 8px 12px;
-  min-width: 60px;
+  padding: 4px 8px;
+  min-width: 56px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 12px;
   position: relative;
@@ -61,22 +61,22 @@
   box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
 }
 
-/* Icon Wrapper */
+/* Icon Wrapper - Reduced size */
 .bottom-navbar-icon-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   background-color: transparent;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
 }
 
-/* Icon Styles */
+/* Icon Styles - Reduced size */
 .bottom-navbar-icon {
-  font-size: 24px;
+  font-size: 20px;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
@@ -97,11 +97,11 @@
   }
 }
 
-/* Label Styles */
+/* Label Styles - Reduced size */
 .bottom-navbar-label {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 500;
-  margin-top: 4px;
+  margin-top: 2px;
   transition: all 0.3s ease;
   white-space: nowrap;
   text-align: center;
@@ -122,15 +122,15 @@
   right: -2px;
   background: linear-gradient(135deg, #FF5252, #F44336);
   color: white;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
-  min-width: 18px;
-  height: 18px;
-  border-radius: 9px;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 5px;
+  padding: 0 4px;
   box-shadow: 0 2px 8px rgba(255, 82, 82, 0.4);
   border: 2px solid white;
   animation: badgePulse 2s ease-in-out infinite;
@@ -177,7 +177,7 @@
 
 /* User Header */
 .bottom-navbar-user-header {
-  padding: 1.25rem 1rem;
+  padding: 1rem 0.875rem;
   border-bottom: 1px solid #e2e8f0;
   background: linear-gradient(135deg, #f7fafc 0%, #ffffff 100%);
 }
@@ -185,12 +185,12 @@
 .bottom-navbar-user-info {
   display: flex;
   align-items: center;
-  gap: 0.875rem;
+  gap: 0.75rem;
 }
 
 .bottom-navbar-user-avatar {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: linear-gradient(135deg, #4CAF50, #2E7D32);
   color: white;
@@ -198,7 +198,7 @@
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1rem;
   box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
   text-transform: uppercase;
 }
@@ -212,7 +212,7 @@
   margin: 0;
   font-weight: 600;
   color: #2d3748;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -220,7 +220,7 @@
 
 .bottom-navbar-user-email {
   margin: 2px 0 0 0;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: #718096;
   white-space: nowrap;
   overflow: hidden;
@@ -231,8 +231,8 @@
 .bottom-navbar-menu-item {
   display: flex;
   align-items: center;
-  gap: 0.875rem;
-  padding: 0.875rem 1rem;
+  gap: 0.75rem;
+  padding: 0.75rem 0.875rem;
   color: #2d3748;
   text-decoration: none;
   transition: all 0.2s ease;
@@ -240,14 +240,14 @@
   background: none;
   width: 100%;
   text-align: left;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   cursor: pointer;
   font-weight: 500;
 }
 
 .bottom-navbar-menu-item:hover {
   background-color: #f7fafc;
-  padding-left: 1.25rem;
+  padding-left: 1.125rem;
 }
 
 .bottom-navbar-menu-item svg {
@@ -306,112 +306,102 @@
    RESPONSIVE DESIGN
 ======================================== */
 
-/* Show on tablets and below (991px) */
-@media (max-width: 991px) {
+/* Show only on mobile screens (767px and below) */
+@media (max-width: 767px) {
   .bottom-navbar {
     display: block;
   }
   
   /* Add padding to body to prevent content being hidden */
   body {
-    padding-bottom: 75px;
+    padding-bottom: 55px;
   }
 }
 
-/* Tablet Optimization (768px - 991px) */
-@media (max-width: 991px) and (min-width: 768px) {
+/* Hide on tablet and desktop (768px and above) */
+@media (min-width: 768px) {
   .bottom-navbar {
-    padding: 10px 0 max(10px, env(safe-area-inset-bottom));
+    display: none !important;
   }
   
-  .bottom-navbar-item {
-    padding: 10px 14px;
-    min-width: 70px;
-  }
-  
-  .bottom-navbar-icon-wrapper {
-    width: 52px;
-    height: 52px;
-  }
-  
-  .bottom-navbar-icon {
-    font-size: 26px;
-  }
-  
-  .bottom-navbar-label {
-    font-size: 12px;
+  body {
+    padding-bottom: 0;
   }
 }
 
 /* Mobile Optimization (577px - 767px) */
-@media (max-width: 767px) {
+@media (max-width: 767px) and (min-width: 577px) {
   .bottom-navbar {
-    padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+    padding: 4px 0 max(4px, env(safe-area-inset-bottom));
   }
   
   .bottom-navbar-item {
-    padding: 8px 10px;
-    min-width: 62px;
+    padding: 4px 8px;
+    min-width: 58px;
   }
   
   .bottom-navbar-icon-wrapper {
-    width: 48px;
-    height: 48px;
+    width: 38px;
+    height: 38px;
   }
   
   .bottom-navbar-icon {
-    font-size: 24px;
-  }
-  
-  .bottom-navbar-label {
-    font-size: 11px;
-  }
-  
-  .bottom-navbar-cart-badge {
-    min-width: 18px;
-    height: 18px;
-    font-size: 10px;
-  }
-  
-  .bottom-navbar-user-menu {
-    min-width: 240px;
-    right: -20px;
-  }
-}
-
-/* Small Mobile (400px - 576px) */
-@media (max-width: 576px) {
-  .bottom-navbar {
-    padding: 6px 0 max(6px, env(safe-area-inset-bottom));
-  }
-  
-  .bottom-navbar-container {
-    padding: 0 4px;
-  }
-  
-  .bottom-navbar-item {
-    padding: 6px 8px;
-    min-width: 56px;
-  }
-  
-  .bottom-navbar-icon-wrapper {
-    width: 44px;
-    height: 44px;
-  }
-  
-  .bottom-navbar-icon {
-    font-size: 22px;
+    font-size: 20px;
   }
   
   .bottom-navbar-label {
     font-size: 10px;
-    margin-top: 3px;
   }
   
   .bottom-navbar-cart-badge {
     min-width: 16px;
     height: 16px;
     font-size: 9px;
+  }
+  
+  .bottom-navbar-user-menu {
+    min-width: 240px;
+    right: -20px;
+  }
+  
+  body {
+    padding-bottom: 55px;
+  }
+}
+
+/* Small Mobile (400px - 576px) */
+@media (max-width: 576px) {
+  .bottom-navbar {
+    padding: 3px 0 max(3px, env(safe-area-inset-bottom));
+  }
+  
+  .bottom-navbar-container {
+    padding: 0 2px;
+  }
+  
+  .bottom-navbar-item {
+    padding: 3px 6px;
+    min-width: 52px;
+  }
+  
+  .bottom-navbar-icon-wrapper {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .bottom-navbar-icon {
+    font-size: 19px;
+  }
+  
+  .bottom-navbar-label {
+    font-size: 9px;
+    margin-top: 1px;
+  }
+  
+  .bottom-navbar-cart-badge {
+    min-width: 15px;
+    height: 15px;
+    font-size: 8px;
     top: -1px;
     right: -1px;
   }
@@ -422,53 +412,57 @@
   }
   
   .bottom-navbar-user-avatar {
-    width: 40px;
-    height: 40px;
-    font-size: 1rem;
+    width: 36px;
+    height: 36px;
+    font-size: 0.95rem;
   }
   
   .bottom-navbar-user-name {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
   
   .bottom-navbar-user-email {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
+  }
+  
+  body {
+    padding-bottom: 50px;
   }
 }
 
 /* Extra Small Mobile (< 400px) */
 @media (max-width: 399px) {
   .bottom-navbar {
-    padding: 5px 0 max(5px, env(safe-area-inset-bottom));
+    padding: 3px 0 max(3px, env(safe-area-inset-bottom));
   }
   
   .bottom-navbar-container {
-    padding: 0 2px;
+    padding: 0 1px;
   }
   
   .bottom-navbar-item {
-    padding: 5px 6px;
-    min-width: 50px;
+    padding: 3px 5px;
+    min-width: 48px;
   }
   
   .bottom-navbar-icon-wrapper {
-    width: 40px;
-    height: 40px;
+    width: 34px;
+    height: 34px;
   }
   
   .bottom-navbar-icon {
-    font-size: 20px;
+    font-size: 18px;
   }
   
   .bottom-navbar-label {
-    font-size: 9px;
-    margin-top: 2px;
+    font-size: 8px;
+    margin-top: 1px;
   }
   
   .bottom-navbar-cart-badge {
-    min-width: 15px;
-    height: 15px;
-    font-size: 8px;
+    min-width: 14px;
+    height: 14px;
+    font-size: 7px;
   }
   
   .bottom-navbar-user-menu {
@@ -477,29 +471,33 @@
   }
   
   .bottom-navbar-menu-item {
-    padding: 0.75rem 0.875rem;
-    font-size: 0.85rem;
+    padding: 0.625rem 0.75rem;
+    font-size: 0.8rem;
+  }
+  
+  body {
+    padding-bottom: 48px;
   }
 }
 
 /* Very Small Screens (< 360px) */
 @media (max-width: 359px) {
   .bottom-navbar-item {
-    padding: 4px 5px;
-    min-width: 48px;
+    padding: 2px 4px;
+    min-width: 44px;
   }
   
   .bottom-navbar-icon-wrapper {
-    width: 38px;
-    height: 38px;
+    width: 32px;
+    height: 32px;
   }
   
   .bottom-navbar-icon {
-    font-size: 19px;
+    font-size: 17px;
   }
   
   .bottom-navbar-label {
-    font-size: 8px;
+    font-size: 7px;
   }
 }
 
@@ -509,24 +507,28 @@
 
 @media (max-height: 500px) and (orientation: landscape) {
   .bottom-navbar {
-    padding: 4px 0;
+    padding: 3px 0;
   }
   
   .bottom-navbar-item {
-    padding: 4px 8px;
+    padding: 3px 6px;
   }
   
   .bottom-navbar-icon-wrapper {
-    width: 40px;
-    height: 40px;
+    width: 34px;
+    height: 34px;
   }
   
   .bottom-navbar-icon {
-    font-size: 20px;
+    font-size: 18px;
   }
   
   .bottom-navbar-label {
-    font-size: 9px;
+    font-size: 8px;
+  }
+  
+  body {
+    padding-bottom: 48px;
   }
 }
 
