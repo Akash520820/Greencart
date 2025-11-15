@@ -1,10 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import FormInput from './FormInput';
 import AuthToggleText from './AuthToggleText';
-import { useClientAuth } from '../../../context/ClientAuthContext';  // ← FIXED
+import { useClientAuth } from '../../../context/ClientAuthContext';
 
-const AuthForm = ({ isLogin, onToggleMode, onClose }) => {
-  const { login } = useClientAuth();  // ← FIXED
+const AuthForm = ({ isLogin, onToggleMode, onClose, onAuthSuccess, hasPendingProduct }) => {
+  const { login } = useClientAuth();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -29,15 +29,37 @@ const AuthForm = ({ isLogin, onToggleMode, onClose }) => {
       email: formData.email,
     };
     
+    // Login user
     login(userData);
-    onClose();
     
     // Reset form
     setFormData({ name: '', email: '', password: '' });
+    
+    // Call success handler which will handle product addition and redirect
+    if (onAuthSuccess) {
+      onAuthSuccess();
+    } else {
+      onClose();
+    }
   };
 
   return (
     <form onSubmit={handleSubmit}>
+      {hasPendingProduct && (
+        <div style={{
+          padding: '0.75rem',
+          marginBottom: '1rem',
+          backgroundColor: '#e7f5ec',
+          borderRadius: '8px',
+          border: '1px solid #4CAF50',
+          fontSize: '0.85rem',
+          color: '#2E7D32',
+          textAlign: 'center'
+        }}>
+          ✓ Login to add this product to your cart
+        </div>
+      )}
+
       {!isLogin && (
         <FormInput
           label="Name"

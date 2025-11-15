@@ -1,9 +1,11 @@
 import React, { useState, useEffect, memo } from 'react';
 import { useCart } from '../../context/CartContext';
+import { useClientAuth } from '../../context/ClientAuthContext';
 import './ProductCard.css';
 
-const ProductCard = memo(({ product }) => {
+const ProductCard = memo(({ product, onLoginRequired }) => {
   const { addToCart, cartItems } = useCart();
+  const { isAuthenticated } = useClientAuth();
   const [isAdding, setIsAdding] = useState(false);
   const [isInCart, setIsInCart] = useState(false);
 
@@ -14,6 +16,15 @@ const ProductCard = memo(({ product }) => {
   }, [cartItems, product._id]);
 
   const handleAddToCart = () => {
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      // Trigger login modal with this product
+      if (onLoginRequired) {
+        onLoginRequired(product);
+      }
+      return;
+    }
+
     if (isInCart) return; // Don't add if already in cart
     
     setIsAdding(true);
