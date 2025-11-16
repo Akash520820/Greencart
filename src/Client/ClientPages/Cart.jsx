@@ -1,25 +1,32 @@
-// Cart.jsx - Updated to use Payment Modal
-import React, { useEffect, useState, useCallback } from 'react';
+// Cart.jsx - Optimized with Component Separation
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import { useCart } from '../../context/CartContext';
 import { useClientAuth } from '../../context/ClientAuthContext';
-import CartItem from '../ClientsComponent/Cart/CartItem';
+
+// Separated Components
+import CartHeader from '../ClientsComponent/Cart/CartHeader';
+import CartItemsList from '../ClientsComponent/Cart/CartItemsList';
 import EmptyCart from '../ClientsComponent/Cart/EmptyCart';
 import CartLoading from '../ClientsComponent/Cart/CartLoading';
+import AddressSection from '../ClientsComponent/Cart/AddressSection';
+import PriceBreakdown from '../ClientsComponent/Cart/PriceBreakdown';
+import AddressModal from '../ClientsComponent/Cart/AddressModal';
 import PaymentModal from '../ClientsComponent/Cart/PaymentModal';
+
 import './Cart.css';
 
 const Cart = () => {
   const navigate = useNavigate();
   const { cartItems, updateQuantity, removeFromCart, getTotalPrice, clearCart } = useCart();
   const { isAuthenticated, user } = useClientAuth();
+  
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [addresses, setAddresses] = useState([]);
-
   const [newAddress, setNewAddress] = useState({
     fullName: '',
     phone: '',
@@ -30,7 +37,7 @@ const Cart = () => {
     pincode: ''
   });
 
-  // Load addresses on mount
+  // Load addresses on mount - Memoized
   useEffect(() => {
     if (user?.email) {
       const saved = localStorage.getItem(`addresses_${user.email}`);
@@ -42,14 +49,24 @@ const Cart = () => {
         }
       }
     }
-  }, [user, selectedAddress]);
+  }, [user?.email]); // Only depend on email
 
+  // Auth check
   useEffect(() => {
     if (!isAuthenticated) {
       setShowAuthModal(true);
     }
   }, [isAuthenticated]);
 
+  // Memoized price calculations
+  const priceData = useMemo(() => {
+    const subtotal = getTotalPrice();
+    const tax = subtotal * 0.02;
+    const total = subtotal + tax;
+    return { subtotal, tax, total };
+  }, [getTotalPrice]);
+
+  // Memoized handlers
   const handleCloseModal = useCallback(() => {
     setShowAuthModal(false);
     if (!isAuthenticated) {
@@ -125,7 +142,12 @@ const Cart = () => {
     });
   }, [clearCart]);
 
-  const handleAddressSubmit = (e) => {
+  const handleAddressSelect = useCallback((addr) => {
+    setSelectedAddress(addr);
+    setShowAddressModal(false);
+  }, []);
+
+  const handleAddressSubmit = useCallback((e) => {
     e.preventDefault();
     const addressWithId = {
       ...newAddress,
@@ -152,9 +174,9 @@ const Cart = () => {
       duration: 2000,
       position: 'top-center',
     });
-  };
+  }, [newAddress, addresses, user?.email]);
 
-  const handleCheckout = () => {
+  const handleCheckout = useCallback(() => {
     if (!selectedAddress) {
       toast.error('Please add a delivery address first', {
         duration: 3000,
@@ -175,9 +197,9 @@ const Cart = () => {
       return;
     }
     setShowPaymentModal(true);
-  };
+  }, [selectedAddress]);
 
-  const handlePaymentComplete = (paymentDetails) => {
+  const handlePaymentComplete = useCallback((paymentDetails) => {
     const subtotal = getTotalPrice();
     const platformFee = 5;
     const handlingFee = paymentDetails.method === 'cod' ? 9 : 0;
@@ -236,12 +258,9 @@ const Cart = () => {
     setTimeout(() => {
       navigate('/my-orders');
     }, 1000);
-  };
+  }, [cartItems, selectedAddress, user, getTotalPrice, clearCart, navigate]);
 
-  const subtotal = getTotalPrice();
-  const tax = subtotal * 0.02;
-  const total = subtotal + tax;
-
+  // Early returns
   if (!isAuthenticated) {
     return (
       <CartLoading 
@@ -260,94 +279,34 @@ const Cart = () => {
     <div className="cart-page">
       <Toaster />
       <div className="container">
-        <div className="cart-header">
-          <h1 className="cart-title">Shopping Cart</h1>
-          <p className="cart-subtitle">
-            {cartItems.length} {cartItems.length === 1 ? 'item' : 'items'}
-          </p>
-        </div>
+        <CartHeader itemCount={cartItems.length} />
 
         <div className="cart-content">
-          <div className="cart-items-section">
-            {cartItems.map((item) => (
-              <CartItem
-                key={item._id}
-                item={item}
-                onQuantityChange={handleQuantityChange}
-                onRemove={handleRemoveItem}
-              />
-            ))}
+          {/* Left: Cart Items */}
+          <CartItemsList
+            items={cartItems}
+            onQuantityChange={handleQuantityChange}
+            onRemove={handleRemoveItem}
+            onClearCart={handleClearCart}
+          />
 
-            <button className="clear-cart-btn" onClick={handleClearCart}>
-              Clear Cart
-            </button>
-          </div>
-
+          {/* Right: Summary */}
           <div className="cart-summary-section">
             <div className="cart-summary">
               <h2 className="cart-summary-title">Order Summary</h2>
               
-              {/* Delivery Address */}
-              <div className="checkout-section">
-                <div className="checkout-section-header">
-                  <h3>DELIVERY ADDRESS</h3>
-                  {selectedAddress && (
-                    <button 
-                      className="change-link"
-                      onClick={() => setShowAddressModal(true)}
-                    >
-                      Change
-                    </button>
-                  )}
-                </div>
-                
-                {selectedAddress ? (
-                  <div className="selected-address">
-                    <p className="address-name">{selectedAddress.fullName}</p>
-                    <p className="address-text">
-                      {selectedAddress.addressLine1}
-                      {selectedAddress.addressLine2 && `, ${selectedAddress.addressLine2}`}
-                    </p>
-                    <p className="address-text">
-                      {selectedAddress.city}, {selectedAddress.state} - {selectedAddress.pincode}
-                    </p>
-                    <p className="address-phone">Phone: {selectedAddress.phone}</p>
-                  </div>
-                ) : (
-                  <div className="no-address">
-                    <p>No address found</p>
-                    <button 
-                      className="add-address-btn"
-                      onClick={() => setShowAddressModal(true)}
-                    >
-                      Add Address
-                    </button>
-                  </div>
-                )}
-              </div>
+              {/* Address Section */}
+              <AddressSection
+                selectedAddress={selectedAddress}
+                onChangeAddress={() => setShowAddressModal(true)}
+              />
 
               {/* Price Breakdown */}
-              <div className="cart-summary-row">
-                <span>Subtotal</span>
-                <span>₹{subtotal.toFixed(2)}</span>
-              </div>
-              
-              <div className="cart-summary-row">
-                <span>Shipping Fee</span>
-                <span className="cart-summary-free">FREE</span>
-              </div>
-              
-              <div className="cart-summary-row">
-                <span>Tax (2%)</span>
-                <span>₹{tax.toFixed(2)}</span>
-              </div>
-              
-              <div className="cart-summary-divider"></div>
-              
-              <div className="cart-summary-row cart-summary-total">
-                <span>Total Amount:</span>
-                <span>₹{total.toFixed(2)}</span>
-              </div>
+              <PriceBreakdown
+                subtotal={priceData.subtotal}
+                tax={priceData.tax}
+                total={priceData.total}
+              />
 
               <button className="checkout-btn" onClick={handleCheckout}>
                 Proceed to Checkout
@@ -368,147 +327,22 @@ const Cart = () => {
           </div>
         </div>
 
-        {/* Address Modal */}
-        {showAddressModal && (
-          <div className="modal-overlay" onClick={() => setShowAddressModal(false)}>
-            <div className="address-modal-content" onClick={(e) => e.stopPropagation()}>
-              <div className="modal-header">
-                <h2>Delivery Address</h2>
-                <button 
-                  className="modal-close-btn"
-                  onClick={() => setShowAddressModal(false)}
-                >
-                  ×
-                </button>
-              </div>
+        {/* Modals */}
+        <AddressModal
+          show={showAddressModal}
+          addresses={addresses}
+          selectedAddress={selectedAddress}
+          newAddress={newAddress}
+          onClose={() => setShowAddressModal(false)}
+          onAddressSelect={handleAddressSelect}
+          onAddressChange={setNewAddress}
+          onSubmit={handleAddressSubmit}
+        />
 
-              {addresses.length > 0 && (
-                <div className="saved-addresses">
-                  <h3>Saved Addresses</h3>
-                  {addresses.map((addr) => (
-                    <div 
-                      key={addr.id} 
-                      className={`saved-address-item ${selectedAddress?.id === addr.id ? 'selected' : ''}`}
-                      onClick={() => {
-                        setSelectedAddress(addr);
-                        setShowAddressModal(false);
-                      }}
-                    >
-                      <div className="address-radio">
-                        {selectedAddress?.id === addr.id && <div className="radio-dot"></div>}
-                      </div>
-                      <div className="address-info">
-                        <p className="addr-name">{addr.fullName}</p>
-                        <p className="addr-text">
-                          {addr.addressLine1}, {addr.addressLine2}
-                        </p>
-                        <p className="addr-text">
-                          {addr.city}, {addr.state} - {addr.pincode}
-                        </p>
-                        <p className="addr-phone">Phone: {addr.phone}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-              
-              <div className="add-new-address">
-                <h3>Add New Address</h3>
-                <form onSubmit={handleAddressSubmit} className="address-form">
-                  <div className="form-group">
-                    <label>Full Name *</label>
-                    <input
-                      type="text"
-                      required
-                      value={newAddress.fullName}
-                      onChange={(e) => setNewAddress({...newAddress, fullName: e.target.value})}
-                      placeholder="Enter your full name"
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label>Phone Number *</label>
-                    <input
-                      type="tel"
-                      required
-                      value={newAddress.phone}
-                      onChange={(e) => setNewAddress({...newAddress, phone: e.target.value})}
-                      placeholder="10-digit mobile number"
-                      pattern="[0-9]{10}"
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label>Address Line 1 *</label>
-                    <input
-                      type="text"
-                      required
-                      value={newAddress.addressLine1}
-                      onChange={(e) => setNewAddress({...newAddress, addressLine1: e.target.value})}
-                      placeholder="House No., Building Name"
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label>Address Line 2</label>
-                    <input
-                      type="text"
-                      value={newAddress.addressLine2}
-                      onChange={(e) => setNewAddress({...newAddress, addressLine2: e.target.value})}
-                      placeholder="Road Name, Area, Colony"
-                    />
-                  </div>
-
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label>City *</label>
-                      <input
-                        type="text"
-                        required
-                        value={newAddress.city}
-                        onChange={(e) => setNewAddress({...newAddress, city: e.target.value})}
-                        placeholder="City"
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>State *</label>
-                      <input
-                        type="text"
-                        required
-                        value={newAddress.state}
-                        onChange={(e) => setNewAddress({...newAddress, state: e.target.value})}
-                        placeholder="State"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Pincode *</label>
-                    <input
-                      type="text"
-                      required
-                      value={newAddress.pincode}
-                      onChange={(e) => setNewAddress({...newAddress, pincode: e.target.value})}
-                      placeholder="6-digit pincode"
-                      pattern="[0-9]{6}"
-                    />
-                  </div>
-
-                  <button type="submit" className="submit-address-btn">
-                    Save & Use This Address
-                  </button>
-                </form>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Payment Modal */}
         <PaymentModal
           show={showPaymentModal}
           onClose={() => setShowPaymentModal(false)}
-          orderTotal={subtotal}
+          orderTotal={priceData.subtotal}
           onPaymentComplete={handlePaymentComplete}
         />
       </div>
