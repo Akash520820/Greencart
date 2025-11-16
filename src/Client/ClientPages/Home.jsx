@@ -3,6 +3,7 @@ import "./Home.css";
 import MainBanner from '../ClientsComponent/MainBanner';
 import CategoriesSection from '../ClientsComponent/CategoriesSection';
 import BestSeller from '../ClientsComponent/BestSeller';
+import PromoBanner from '../ClientsComponent/PromoBanner';
 
 
 const Home = () => {
@@ -12,6 +13,7 @@ const Home = () => {
       <MainBanner />
       <CategoriesSection />
       <BestSeller />
+      <PromoBanner />
     </div>
     </>
   )
