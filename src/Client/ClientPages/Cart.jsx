@@ -1,4 +1,4 @@
-// Cart.jsx - Enhanced with Checkout Features
+// Cart.jsx - Updated to use Payment Modal
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
@@ -7,6 +7,7 @@ import { useClientAuth } from '../../context/ClientAuthContext';
 import CartItem from '../ClientsComponent/Cart/CartItem';
 import EmptyCart from '../ClientsComponent/Cart/EmptyCart';
 import CartLoading from '../ClientsComponent/Cart/CartLoading';
+import PaymentModal from '../ClientsComponent/Cart/PaymentModal';
 import './Cart.css';
 
 const Cart = () => {
@@ -14,9 +15,9 @@ const Cart = () => {
   const { cartItems, updateQuantity, removeFromCart, getTotalPrice, clearCart } = useCart();
   const { isAuthenticated, user } = useClientAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(null);
-  const [paymentMethod, setPaymentMethod] = useState('Online Payment');
   const [addresses, setAddresses] = useState([]);
 
   const [newAddress, setNewAddress] = useState({
@@ -36,7 +37,6 @@ const Cart = () => {
       if (saved) {
         const parsedAddresses = JSON.parse(saved);
         setAddresses(parsedAddresses);
-        // Auto-select first address if available
         if (parsedAddresses.length > 0 && !selectedAddress) {
           setSelectedAddress(parsedAddresses[0]);
         }
@@ -78,9 +78,7 @@ const Cart = () => {
         </span>
         <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
           <button
-            onClick={() => {
-              toast.dismiss(t.id);
-            }}
+            onClick={() => toast.dismiss(t.id)}
             style={{
               padding: '8px 16px',
               background: '#e2e8f0',
@@ -149,11 +147,16 @@ const Cart = () => {
       state: '',
       pincode: ''
     });
+
+    toast.success('Address added successfully!', {
+      duration: 2000,
+      position: 'top-center',
+    });
   };
 
-  const handlePlaceOrder = () => {
+  const handleCheckout = () => {
     if (!selectedAddress) {
-      toast.error('Please select a delivery address', {
+      toast.error('Please add a delivery address first', {
         duration: 3000,
         position: 'top-center',
         style: {
@@ -171,11 +174,15 @@ const Cart = () => {
       });
       return;
     }
+    setShowPaymentModal(true);
+  };
 
+  const handlePaymentComplete = (paymentDetails) => {
     const subtotal = getTotalPrice();
-    const tax = subtotal * 0.02; // 2% tax
-    const shipping = 0; // Free shipping
-    const total = subtotal + tax + shipping;
+    const platformFee = 5;
+    const handlingFee = paymentDetails.method === 'cod' ? 9 : 0;
+    const tax = subtotal * 0.02;
+    const total = subtotal + platformFee + handlingFee + tax;
 
     const order = {
       orderId: `ORD${Date.now()}`,
@@ -186,23 +193,27 @@ const Cart = () => {
         priceAtOrder: item.offerPrice || item.price
       })),
       address: selectedAddress,
-      paymentMethod,
+      paymentMethod: paymentDetails.method,
+      paymentDetails: paymentDetails.details,
       subtotal: parseFloat(subtotal.toFixed(2)),
       tax: parseFloat(tax.toFixed(2)),
-      shipping,
+      platformFee,
+      handlingFee,
+      shipping: 0,
       total: parseFloat(total.toFixed(2)),
       status: 'Pending',
       orderDate: new Date().toISOString(),
       estimatedDelivery: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
     };
 
-    // Save order to localStorage
+    // Save order
     const existingOrders = JSON.parse(localStorage.getItem(`orders_${user?.email}`) || '[]');
     existingOrders.unshift(order);
     localStorage.setItem(`orders_${user?.email}`, JSON.stringify(existingOrders));
 
     // Clear cart
     clearCart();
+    setShowPaymentModal(false);
 
     // Success toast
     toast.success('Order placed successfully! 🎉', {
@@ -222,18 +233,15 @@ const Cart = () => {
       },
     });
 
-    // Navigate to orders page after a short delay
     setTimeout(() => {
       navigate('/my-orders');
     }, 1000);
   };
 
-  // Calculate totals
   const subtotal = getTotalPrice();
   const tax = subtotal * 0.02;
   const total = subtotal + tax;
 
-  // Loading state
   if (!isAuthenticated) {
     return (
       <CartLoading 
@@ -244,7 +252,6 @@ const Cart = () => {
     );
   }
 
-  // Empty cart
   if (cartItems.length === 0) {
     return <EmptyCart onStartShopping={handleContinueShopping} />;
   }
@@ -261,7 +268,6 @@ const Cart = () => {
         </div>
 
         <div className="cart-content">
-          {/* Cart Items Section */}
           <div className="cart-items-section">
             {cartItems.map((item) => (
               <CartItem
@@ -277,7 +283,6 @@ const Cart = () => {
             </button>
           </div>
 
-          {/* Order Summary Section */}
           <div className="cart-summary-section">
             <div className="cart-summary">
               <h2 className="cart-summary-title">Order Summary</h2>
@@ -286,14 +291,14 @@ const Cart = () => {
               <div className="checkout-section">
                 <div className="checkout-section-header">
                   <h3>DELIVERY ADDRESS</h3>
-                  {selectedAddress ? (
+                  {selectedAddress && (
                     <button 
                       className="change-link"
                       onClick={() => setShowAddressModal(true)}
                     >
                       Change
                     </button>
-                  ) : null}
+                  )}
                 </div>
                 
                 {selectedAddress ? (
@@ -321,25 +326,9 @@ const Cart = () => {
                 )}
               </div>
 
-              {/* Payment Method */}
-              <div className="checkout-section">
-                <h3>PAYMENT METHOD</h3>
-                <select 
-                  className="payment-select"
-                  value={paymentMethod}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                >
-                  <option value="Online Payment">Online Payment</option>
-                  <option value="Cash on Delivery">Cash on Delivery</option>
-                  <option value="Credit Card">Credit Card</option>
-                  <option value="Debit Card">Debit Card</option>
-                  <option value="UPI">UPI</option>
-                </select>
-              </div>
-
               {/* Price Breakdown */}
               <div className="cart-summary-row">
-                <span>Price</span>
+                <span>Subtotal</span>
                 <span>₹{subtotal.toFixed(2)}</span>
               </div>
               
@@ -360,7 +349,7 @@ const Cart = () => {
                 <span>₹{total.toFixed(2)}</span>
               </div>
 
-              <button className="checkout-btn" onClick={handlePlaceOrder}>
+              <button className="checkout-btn" onClick={handleCheckout}>
                 Proceed to Checkout
               </button>
 
@@ -393,7 +382,6 @@ const Cart = () => {
                 </button>
               </div>
 
-              {/* Saved Addresses */}
               {addresses.length > 0 && (
                 <div className="saved-addresses">
                   <h3>Saved Addresses</h3>
@@ -424,7 +412,6 @@ const Cart = () => {
                 </div>
               )}
               
-              {/* Add New Address Form */}
               <div className="add-new-address">
                 <h3>Add New Address</h3>
                 <form onSubmit={handleAddressSubmit} className="address-form">
@@ -516,6 +503,14 @@ const Cart = () => {
             </div>
           </div>
         )}
+
+        {/* Payment Modal */}
+        <PaymentModal
+          show={showPaymentModal}
+          onClose={() => setShowPaymentModal(false)}
+          orderTotal={subtotal}
+          onPaymentComplete={handlePaymentComplete}
+        />
       </div>
     </div>
   );
