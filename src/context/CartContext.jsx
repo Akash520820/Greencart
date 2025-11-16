@@ -12,19 +12,28 @@ export const useCart = () => {
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Load cart from localStorage on mount
   useEffect(() => {
     const savedCart = localStorage.getItem('cartItems');
     if (savedCart) {
-      setCartItems(JSON.parse(savedCart));
+      try {
+        setCartItems(JSON.parse(savedCart));
+      } catch (error) {
+        console.error('Error parsing cart from localStorage:', error);
+        localStorage.removeItem('cartItems');
+      }
     }
+    setIsInitialized(true);
   }, []);
 
-  // Save cart to localStorage whenever it changes
+  // Save cart to localStorage whenever it changes (but only after initialization)
   useEffect(() => {
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
-  }, [cartItems]);
+    if (isInitialized) {
+      localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    }
+  }, [cartItems, isInitialized]);
 
   // Listen for cart clear event (triggered on logout)
   useEffect(() => {

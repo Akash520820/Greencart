@@ -1,28 +1,38 @@
-/* Add this to your existing App.css file */
+/* ========================================
+   FIXED NAVBAR SPACING - CRITICAL!
+======================================== */
 
-/* Desktop - No bottom padding needed */
+/* Body padding for fixed navbar */
 body {
+  padding-top: 80px !important;
   margin: 0;
-  padding: 0;
+  padding-bottom: 0;
 }
+
+/* Root element */
 #root {
   min-height: 100vh;
 }
 
-/* Mobile - Add padding to prevent content being hidden behind bottom nav */
-@media (max-width: 991px) {
+/* Tablet - Adjust padding for hamburger menu navbar */
+@media (max-width: 1000px) {
   body {
-    padding-bottom: 70px;
-  }
-  
-  /* Ensure main content doesn't get cut off */
-  main {
-    min-height: calc(100vh - 140px);
+    padding-top: 75px !important;
   }
 }
 
+/* Mobile - Logo only navbar + bottom navbar */
+@media (max-width: 767px) {
+  body {
+    padding-top: 65px !important;
+    padding-bottom: 70px !important;
+  }
+}
+
+/* Small mobile optimization */
 @media (max-width: 576px) {
   body {
-    padding-bottom: 65px;
+    padding-top: 60px !important;
+    padding-bottom: 65px !important;
   }
 }
