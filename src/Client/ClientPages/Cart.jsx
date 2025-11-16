@@ -16,6 +16,7 @@ import AddressModal from '../ClientsComponent/Cart/AddressModal';
 import PaymentModal from '../ClientsComponent/Cart/PaymentModal';
 
 import './Cart.css';
+import '../ClientsComponent/Cart/AddressModal.css';
 
 const Cart = () => {
   const navigate = useNavigate();

@@ -1,0 +1,642 @@
+/* AddressModal.css - Modern Redesign for All Screen Sizes */
+
+/* ========================================
+   MODAL OVERLAY
+======================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 0;
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ========================================
+   MODAL CONTENT - DESKTOP CENTERED
+======================================== */
+.address-modal-content {
+  background: white;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  animation: scaleIn 0.25s ease;
+  position: relative;
+}
+
+@keyframes scaleIn {
+  from { 
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to { 
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ========================================
+   STICKY HEADER
+======================================== */
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 2px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border-radius: 20px 20px 0 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.modal-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.modal-close-btn {
+  background: #f7fafc;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #4a5568;
+  font-size: 1.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.modal-close-btn:hover {
+  background: #e2e8f0;
+  transform: rotate(90deg);
+}
+
+.modal-close-btn:active {
+  transform: rotate(90deg) scale(0.9);
+}
+
+/* ========================================
+   SCROLLABLE BODY
+======================================== */
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #f8fafc;
+}
+
+/* Custom Scrollbar */
+.modal-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+/* ========================================
+   SAVED ADDRESSES - MODERN CARDS
+======================================== */
+.saved-addresses {
+  padding: 24px;
+  background: white;
+}
+
+.saved-addresses h3 {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #718096;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 16px 0;
+}
+
+.saved-addresses-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.saved-address-item {
+  display: flex;
+  gap: 16px;
+  padding: 18px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #f8fafc;
+  position: relative;
+  overflow: hidden;
+}
+
+.saved-address-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: transparent;
+  transition: all 0.2s ease;
+}
+
+.saved-address-item:hover {
+  border-color: #4CAF50;
+  background: white;
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.15);
+}
+
+.saved-address-item:hover::before {
+  background: #4CAF50;
+}
+
+.saved-address-item.selected {
+  border-color: #4CAF50;
+  background: #f0fdf4;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+}
+
+.saved-address-item.selected::before {
+  background: #4CAF50;
+}
+
+.address-radio {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  border: 2px solid #cbd5e0;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  margin-top: 2px;
+}
+
+.saved-address-item.selected .address-radio {
+  border-color: #4CAF50;
+  border-width: 2px;
+  background: #4CAF50;
+}
+
+.radio-dot {
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  animation: dotPop 0.2s ease;
+}
+
+@keyframes dotPop {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.address-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.addr-name {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #1a202c;
+  margin: 0 0 8px 0;
+}
+
+.addr-text {
+  color: #4a5568;
+  font-size: 0.875rem;
+  margin: 4px 0;
+  line-height: 1.5;
+}
+
+.addr-phone {
+  color: #718096;
+  font-size: 0.8rem;
+  margin: 8px 0 0 0;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.addr-phone::before {
+  content: '📞';
+  font-size: 0.75rem;
+}
+
+/* ========================================
+   ADD NEW ADDRESS FORM - MODERN DESIGN
+======================================== */
+.add-new-address {
+  padding: 24px;
+  padding-bottom: 32px; /* Extra bottom space for button */
+  background: #f8fafc;
+}
+
+.add-new-address h3 {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #718096;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 20px 0;
+}
+
+.address-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 20px; /* Extra space after form */
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #2d3748;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  background: white;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.form-group input:hover {
+  border-color: #cbd5e0;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.1);
+  background: white;
+}
+
+.form-group input::placeholder {
+  color: #a0aec0;
+  font-weight: 400;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.submit-address-btn {
+  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+  color: white;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 8px;
+  margin-bottom: 8px; /* Space at bottom */
+  box-shadow: 0 4px 14px rgba(76, 175, 80, 0.4);
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-address-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.submit-address-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.submit-address-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5);
+}
+
+.submit-address-btn:active {
+  transform: translateY(0);
+}
+
+/* ========================================
+   RESPONSIVE - TABLET (768px - 991px)
+======================================== */
+@media (max-width: 991px) {
+  .address-modal-content {
+    max-width: 85%;
+    max-height: 85vh;
+  }
+
+  .modal-header {
+    padding: 18px 20px;
+  }
+
+  .modal-header h2 {
+    font-size: 1.35rem;
+  }
+}
+
+/* ========================================
+   RESPONSIVE - MOBILE (≤ 767px)
+======================================== */
+@media (max-width: 767px) {
+  .modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .address-modal-content {
+    max-width: 100%;
+    width: 100%;
+    max-height: 90vh; /* Reduced from 92vh for better visibility */
+    border-radius: 24px 24px 0 0;
+    animation: slideUpMobile 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  @keyframes slideUpMobile {
+    from { 
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to { 
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .modal-header {
+    padding: 16px 20px 14px 20px;
+    border-radius: 24px 24px 0 0;
+  }
+
+  .modal-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .modal-close-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 1.25rem;
+  }
+
+  .saved-addresses {
+    padding: 20px;
+  }
+
+  .add-new-address {
+    padding: 20px;
+    padding-bottom: 40px; /* Extra space for mobile */
+  }
+
+  .saved-addresses h3,
+  .add-new-address h3 {
+    font-size: 0.7rem;
+  }
+
+  .saved-address-item {
+    padding: 16px;
+  }
+
+  .address-radio {
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+  }
+
+  .addr-name {
+    font-size: 0.95rem;
+  }
+
+  .addr-text {
+    font-size: 0.825rem;
+  }
+
+  .addr-phone {
+    font-size: 0.75rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .form-group input {
+    padding: 13px 14px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  .submit-address-btn {
+    padding: 15px 20px;
+    font-size: 0.95rem;
+    margin-bottom: 16px; /* More space on mobile */
+  }
+}
+
+/* ========================================
+   RESPONSIVE - SMALL MOBILE (≤ 480px)
+======================================== */
+@media (max-width: 480px) {
+  .address-modal-content {
+    max-height: 88vh; /* Reduced for better button visibility */
+  }
+
+  .modal-header {
+    padding: 14px 18px 12px 18px;
+  }
+
+  .modal-header h2 {
+    font-size: 1.15rem;
+  }
+
+  .modal-close-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .saved-addresses {
+    padding: 18px;
+  }
+
+  .add-new-address {
+    padding: 18px;
+    padding-bottom: 36px; /* Extra space for small screens */
+  }
+
+  .saved-address-item {
+    padding: 14px;
+    gap: 14px;
+  }
+
+  .addr-name {
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+  }
+
+  .addr-text {
+    font-size: 0.8rem;
+  }
+
+  .form-group label {
+    font-size: 0.8rem;
+  }
+
+  .form-group input {
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  .submit-address-btn {
+    padding: 14px 18px;
+    margin-bottom: 12px; /* Ensure visibility */
+  }
+}
+
+/* ========================================
+   RESPONSIVE - TINY SCREENS (≤ 360px)
+======================================== */
+@media (max-width: 360px) {
+  .address-modal-content {
+    max-height: 86vh; /* More conservative height */
+  }
+
+  .modal-header {
+    padding: 12px 16px;
+  }
+
+  .modal-header h2 {
+    font-size: 1.05rem;
+  }
+
+  .saved-addresses {
+    padding: 16px;
+  }
+
+  .add-new-address {
+    padding: 16px;
+    padding-bottom: 32px; /* Ensure button visibility */
+  }
+
+  .saved-address-item {
+    padding: 12px;
+  }
+
+  .form-group input {
+    padding: 11px;
+  }
+
+  .submit-address-btn {
+    padding: 13px 16px;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY & POLISH
+======================================== */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.saved-address-item:focus-visible,
+.modal-close-btn:focus-visible,
+.submit-address-btn:focus-visible,
+.form-group input:focus-visible {
+  outline: 3px solid #4CAF50;
+  outline-offset: 2px;
+}
+
+/* Safe area for notched devices */
+@supports (padding: max(0px)) {
+  .modal-header {
+    padding-left: max(24px, env(safe-area-inset-left));
+    padding-right: max(24px, env(safe-area-inset-right));
+  }
+  
+  .saved-addresses,
+  .add-new-address {
+    padding-left: max(24px, env(safe-area-inset-left));
+    padding-right: max(24px, env(safe-area-inset-right));
+  }
+  
+  .submit-address-btn {
+    margin-bottom: max(8px, env(safe-area-inset-bottom, 8px));
+  }
+  
+  @media (max-width: 767px) {
+    .add-new-address {
+      padding-bottom: max(40px, calc(env(safe-area-inset-bottom) + 24px));
+    }
+  }
+}

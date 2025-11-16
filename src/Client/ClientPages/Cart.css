@@ -1,4 +1,4 @@
-/* Cart.css - Enhanced with Checkout Styles */
+/* Cart.css - Updated (Modal Styles Removed) */
 
 /* ========================================
    CART PAGE
@@ -292,7 +292,7 @@
 }
 
 /* ========================================
-   CART SUMMARY - ENHANCED WITH CHECKOUT
+   CART SUMMARY
 ======================================== */
 .cart-summary-section {
   position: sticky;
@@ -338,6 +338,7 @@
   color: #2d3748;
   letter-spacing: 0.5px;
   margin: 0 0 12px 0;
+  text-transform: uppercase;
 }
 
 .change-link {
@@ -348,6 +349,7 @@
   font-weight: 600;
   cursor: pointer;
   text-decoration: underline;
+  transition: color 0.2s ease;
 }
 
 .change-link:hover {
@@ -407,25 +409,8 @@
 
 .add-address-btn:hover {
   background: #2E7D32;
-}
-
-/* Payment Select */
-.payment-select {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  color: #2d3748;
-  background: white;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.payment-select:focus {
-  outline: none;
-  border-color: #4CAF50;
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
 }
 
 /* Price Rows */
@@ -475,6 +460,10 @@
   box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
 }
 
+.checkout-btn:active {
+  transform: translateY(0);
+}
+
 .continue-shopping-btn {
   width: 100%;
   background: white;
@@ -492,6 +481,10 @@
   background: #e7f5ec;
 }
 
+.continue-shopping-btn:active {
+  transform: scale(0.98);
+}
+
 .cart-summary-info {
   display: flex;
   align-items: center;
@@ -501,222 +494,6 @@
   border-top: 1px solid #e2e8f0;
   font-size: 0.85rem;
   color: #4CAF50;
-}
-
-/* ========================================
-   ADDRESS MODAL
-======================================== */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-  overflow-y: auto;
-}
-
-.address-modal-content {
-  background: white;
-  border-radius: 16px;
-  width: 100%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-}
-
-.modal-header {
-  padding: 24px;
-  border-bottom: 1px solid #e2e8f0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: sticky;
-  top: 0;
-  background: white;
-  z-index: 10;
-}
-
-.modal-header h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #2d3748;
-  margin: 0;
-}
-
-.modal-close-btn {
-  background: none;
-  border: none;
-  font-size: 2rem;
-  color: #718096;
-  cursor: pointer;
-  line-height: 1;
-  padding: 0;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: all 0.2s ease;
-}
-
-.modal-close-btn:hover {
-  background: #f7fafc;
-  color: #2d3748;
-}
-
-/* Saved Addresses */
-.saved-addresses {
-  padding: 24px;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.saved-addresses h3 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #2d3748;
-  margin: 0 0 16px 0;
-}
-
-.saved-address-item {
-  display: flex;
-  gap: 12px;
-  padding: 16px;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  margin-bottom: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.saved-address-item:hover {
-  border-color: #4CAF50;
-  background: #f7fef9;
-}
-
-.saved-address-item.selected {
-  border-color: #4CAF50;
-  background: #e7f5ec;
-}
-
-.address-radio {
-  width: 20px;
-  height: 20px;
-  border: 2px solid #cbd5e0;
-  border-radius: 50%;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 2px;
-}
-
-.saved-address-item.selected .address-radio {
-  border-color: #4CAF50;
-}
-
-.radio-dot {
-  width: 10px;
-  height: 10px;
-  background: #4CAF50;
-  border-radius: 50%;
-}
-
-.address-info {
-  flex: 1;
-}
-
-.addr-name {
-  font-weight: 600;
-  color: #2d3748;
-  margin: 0 0 4px 0;
-}
-
-.addr-text {
-  color: #4a5568;
-  font-size: 0.9rem;
-  margin: 2px 0;
-}
-
-.addr-phone {
-  color: #718096;
-  font-size: 0.85rem;
-  margin: 4px 0 0 0;
-}
-
-/* Add New Address Form */
-.add-new-address {
-  padding: 24px;
-}
-
-.add-new-address h3 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #2d3748;
-  margin: 0 0 20px 0;
-}
-
-.address-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.form-group label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #2d3748;
-}
-
-.form-group input {
-  padding: 12px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  transition: all 0.2s ease;
-}
-
-.form-group input:focus {
-  outline: none;
-  border-color: #4CAF50;
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.submit-address-btn {
-  background: linear-gradient(135deg, #4CAF50, #2E7D32);
-  color: white;
-  padding: 14px;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 8px;
-}
-
-.submit-address-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
 }
 
 /* ========================================
@@ -779,14 +556,6 @@
   .empty-cart-title {
     font-size: 1.5rem;
   }
-
-  .address-modal-content {
-    max-width: 95%;
-  }
-
-  .form-row {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* Small Mobile */
@@ -823,12 +592,22 @@
     font-size: 1.1rem;
   }
 
-  .modal-header {
-    padding: 16px;
+  .checkout-section h3 {
+    font-size: 0.8rem;
   }
 
-  .saved-addresses,
-  .add-new-address {
-    padding: 16px;
+  .selected-address {
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+
+  .checkout-btn {
+    padding: 12px;
+    font-size: 0.95rem;
+  }
+
+  .continue-shopping-btn {
+    padding: 10px;
+    font-size: 0.9rem;
   }
 }
