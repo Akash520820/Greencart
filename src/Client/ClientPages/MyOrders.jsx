@@ -1,10 +1,374 @@
-
-import React from 'react'
+// MyOrders.jsx
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
+import { useClientAuth } from '../../context/ClientAuthContext';
+import './MyOrders.css';
 
 const MyOrders = () => {
+  const navigate = useNavigate();
+  const { user, isAuthenticated } = useClientAuth();
+  const [orders, setOrders] = useState([]);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [filterStatus, setFilterStatus] = useState('All');
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/');
+      return;
+    }
+
+    // Load orders from localStorage
+    if (user?.email) {
+      const savedOrders = localStorage.getItem(`orders_${user.email}`);
+      if (savedOrders) {
+        setOrders(JSON.parse(savedOrders));
+      }
+    }
+  }, [user, isAuthenticated, navigate]);
+
+  const getStatusColor = (status) => {
+    const colors = {
+      'Pending': '#FF9800',
+      'Processing': '#2196F3',
+      'Shipped': '#9C27B0',
+      'Delivered': '#4CAF50',
+      'Cancelled': '#F44336'
+    };
+    return colors[status] || '#757575';
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-IN', { 
+      day: 'numeric', 
+      month: 'short', 
+      year: 'numeric' 
+    });
+  };
+
+  const handleViewDetails = (order) => {
+    setSelectedOrder(order);
+    setShowDetailsModal(true);
+  };
+
+  const handleCancelOrder = (orderId) => {
+    toast((t) => (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <span style={{ fontWeight: '600', color: '#2d3748' }}>
+          Are you sure you want to cancel this order?
+        </span>
+        <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+          <button
+            onClick={() => {
+              toast.dismiss(t.id);
+            }}
+            style={{
+              padding: '8px 16px',
+              background: '#e2e8f0',
+              border: 'none',
+              borderRadius: '6px',
+              fontWeight: '600',
+              cursor: 'pointer',
+            }}
+          >
+            No, Keep It
+          </button>
+          <button
+            onClick={() => {
+              const updatedOrders = orders.map(order => 
+                order.orderId === orderId 
+                  ? { ...order, status: 'Cancelled' }
+                  : order
+              );
+              setOrders(updatedOrders);
+              localStorage.setItem(`orders_${user.email}`, JSON.stringify(updatedOrders));
+              toast.dismiss(t.id);
+              toast.success('Order cancelled successfully', {
+                duration: 3000,
+                position: 'top-center',
+                style: {
+                  background: '#fff',
+                  color: '#2d3748',
+                  padding: '16px',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                },
+                iconTheme: {
+                  primary: '#4CAF50',
+                  secondary: '#fff',
+                },
+              });
+            }}
+            style={{
+              padding: '8px 16px',
+              background: '#e53e3e',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              fontWeight: '600',
+              cursor: 'pointer',
+            }}
+          >
+            Yes, Cancel
+          </button>
+        </div>
+      </div>
+    ), {
+      duration: 6000,
+      position: 'top-center',
+      style: {
+        background: '#fff',
+        padding: '16px',
+        borderRadius: '12px',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+      },
+    });
+  };
+
+  const filteredOrders = filterStatus === 'All' 
+    ? orders 
+    : orders.filter(order => order.status === filterStatus);
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
-    <h1>MyOrders</h1>
-  )
-}
+    <div className="my-orders-page">
+      <Toaster />
+      <div className="container">
+        <div className="orders-header">
+          <h1 className="orders-title">My Orders</h1>
+          <p className="orders-subtitle">
+            {orders.length} {orders.length === 1 ? 'order' : 'orders'} placed
+          </p>
+        </div>
+
+        {/* Filter Buttons */}
+        <div className="orders-filters">
+          {['All', 'Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'].map(status => (
+            <button
+              key={status}
+              className={`filter-btn ${filterStatus === status ? 'active' : ''}`}
+              onClick={() => setFilterStatus(status)}
+            >
+              {status}
+            </button>
+          ))}
+        </div>
+
+        {/* Orders List */}
+        {filteredOrders.length === 0 ? (
+          <div className="no-orders">
+            <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="#cbd5e0" strokeWidth="1.5">
+              <rect x="1" y="3" width="15" height="13"/>
+              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+              <circle cx="5.5" cy="18.5" r="2.5"/>
+              <circle cx="18.5" cy="18.5" r="2.5"/>
+            </svg>
+            <h2>No {filterStatus !== 'All' ? filterStatus : ''} Orders Found</h2>
+            <p>You haven't placed any orders yet</p>
+            <button className="start-shopping-btn" onClick={() => navigate('/AllProduct')}>
+              Start Shopping
+            </button>
+          </div>
+        ) : (
+          <div className="orders-list">
+            {filteredOrders.map((order) => (
+              <div key={order.orderId} className="order-card">
+                <div className="order-card-header">
+                  <div className="order-header-left">
+                    <h3 className="order-id">Order #{order.orderId}</h3>
+                    <span 
+                      className="order-status"
+                      style={{ backgroundColor: `${getStatusColor(order.status)}20`, color: getStatusColor(order.status) }}
+                    >
+                      {order.status}
+                    </span>
+                  </div>
+                  <div className="order-header-right">
+                    <p className="order-date">
+                      Placed on: {formatDate(order.orderDate)}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="order-card-body">
+                  {/* Order Items Preview */}
+                  <div className="order-items-preview">
+                    {order.items.slice(0, 3).map((item, index) => (
+                      <div key={index} className="order-item-mini">
+                        <img src={item.image[0]} alt={item.name} />
+                        <div className="item-mini-details">
+                          <p className="item-mini-name">{item.name}</p>
+                          <p className="item-mini-qty">Qty: {item.quantity}</p>
+                        </div>
+                      </div>
+                    ))}
+                    {order.items.length > 3 && (
+                      <div className="more-items">
+                        +{order.items.length - 3} more
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Order Info */}
+                  <div className="order-info-grid">
+                    <div className="order-info-item">
+                      <span className="info-label">Total Amount</span>
+                      <span className="info-value">₹{order.total.toFixed(2)}</span>
+                    </div>
+                    <div className="order-info-item">
+                      <span className="info-label">Payment Method</span>
+                      <span className="info-value">{order.paymentMethod}</span>
+                    </div>
+                    <div className="order-info-item">
+                      <span className="info-label">Delivery Expected</span>
+                      <span className="info-value">{formatDate(order.estimatedDelivery)}</span>
+                    </div>
+                    <div className="order-info-item">
+                      <span className="info-label">Items</span>
+                      <span className="info-value">{order.items.length}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="order-card-footer">
+                  <button 
+                    className="view-details-btn"
+                    onClick={() => handleViewDetails(order)}
+                  >
+                    View Details
+                  </button>
+                  {order.status === 'Pending' && (
+                    <button 
+                      className="cancel-order-btn"
+                      onClick={() => handleCancelOrder(order.orderId)}
+                    >
+                      Cancel Order
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Order Details Modal */}
+        {showDetailsModal && selectedOrder && (
+          <div className="modal-overlay" onClick={() => setShowDetailsModal(false)}>
+            <div className="order-details-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h2>Order Details</h2>
+                <button 
+                  className="modal-close-btn"
+                  onClick={() => setShowDetailsModal(false)}
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="modal-body">
+                {/* Order Summary */}
+                <div className="details-section">
+                  <div className="section-title-row">
+                    <h3>Order Information</h3>
+                    <span 
+                      className="order-status-badge"
+                      style={{ backgroundColor: `${getStatusColor(selectedOrder.status)}20`, color: getStatusColor(selectedOrder.status) }}
+                    >
+                      {selectedOrder.status}
+                    </span>
+                  </div>
+                  <div className="details-grid">
+                    <div className="detail-item">
+                      <span className="detail-label">Order ID:</span>
+                      <span className="detail-value">{selectedOrder.orderId}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-label">Order Date:</span>
+                      <span className="detail-value">{formatDate(selectedOrder.orderDate)}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-label">Expected Delivery:</span>
+                      <span className="detail-value">{formatDate(selectedOrder.estimatedDelivery)}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-label">Payment Method:</span>
+                      <span className="detail-value">{selectedOrder.paymentMethod}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Delivery Address */}
+                <div className="details-section">
+                  <h3>Delivery Address</h3>
+                  <div className="address-box">
+                    <p className="address-name">{selectedOrder.address.fullName}</p>
+                    <p className="address-text">
+                      {selectedOrder.address.addressLine1}
+                      {selectedOrder.address.addressLine2 && `, ${selectedOrder.address.addressLine2}`}
+                    </p>
+                    <p className="address-text">
+                      {selectedOrder.address.city}, {selectedOrder.address.state} - {selectedOrder.address.pincode}
+                    </p>
+                    <p className="address-phone">Phone: {selectedOrder.address.phone}</p>
+                  </div>
+                </div>
+
+                {/* Order Items */}
+                <div className="details-section">
+                  <h3>Items ({selectedOrder.items.length})</h3>
+                  <div className="order-items-list">
+                    {selectedOrder.items.map((item, index) => (
+                      <div key={index} className="order-detail-item">
+                        <img src={item.image[0]} alt={item.name} className="item-image" />
+                        <div className="item-details">
+                          <h4>{item.name}</h4>
+                          <p className="item-category">{item.category}</p>
+                          <p className="item-quantity">Quantity: {item.quantity}</p>
+                        </div>
+                        <div className="item-price">
+                          ₹{(item.priceAtOrder * item.quantity).toFixed(2)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Price Breakdown */}
+                <div className="details-section">
+                  <h3>Payment Summary</h3>
+                  <div className="price-breakdown">
+                    <div className="price-row">
+                      <span>Subtotal</span>
+                      <span>₹{selectedOrder.subtotal.toFixed(2)}</span>
+                    </div>
+                    <div className="price-row">
+                      <span>Shipping</span>
+                      <span className="free-text">FREE</span>
+                    </div>
+                    <div className="price-row">
+                      <span>Tax (2%)</span>
+                      <span>₹{selectedOrder.tax.toFixed(2)}</span>
+                    </div>
+                    <div className="price-divider"></div>
+                    <div className="price-row total-row">
+                      <span>Total Amount</span>
+                      <span>₹{selectedOrder.total.toFixed(2)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 export default MyOrders;
