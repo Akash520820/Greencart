@@ -15,7 +15,7 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 0;
+  padding: 20px; /* Add padding for spacing from edges */
   animation: addressModalFadeIn 0.25s ease;
 }
 
@@ -38,6 +38,7 @@
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   animation: addressModalScaleIn 0.25s ease;
   position: relative;
+  margin-top: 80px; /* Space from top/navbar on desktop */
 }
 
 @keyframes addressModalScaleIn {
@@ -403,6 +404,7 @@
   .address-modal-container {
     max-width: 85%;
     max-height: 85vh;
+    margin-top: 60px; /* Reduced margin for tablet */
   }
 
   .address-modal-header {
@@ -420,7 +422,7 @@
 @media (max-width: 767px) {
   .address-modal-overlay {
     align-items: flex-end;
-    padding: 0;
+    padding: 0; /* Remove padding on mobile */
   }
 
   .address-modal-container {
@@ -429,6 +431,7 @@
     max-height: 90vh;
     border-radius: 24px 24px 0 0;
     animation: addressModalSlideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+    margin-top: 0; /* Remove top margin on mobile */
   }
 
   @keyframes addressModalSlideUp {
