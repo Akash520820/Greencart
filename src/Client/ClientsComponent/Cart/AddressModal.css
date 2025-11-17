@@ -1,9 +1,9 @@
-/* AddressModal.css - Modern Redesign for All Screen Sizes */
+/* AddressModal.css - BEM Naming Convention */
 
 /* ========================================
    MODAL OVERLAY
 ======================================== */
-.modal-overlay {
+.address-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -16,18 +16,18 @@
   justify-content: center;
   z-index: 1000;
   padding: 0;
-  animation: fadeIn 0.25s ease;
+  animation: addressModalFadeIn 0.25s ease;
 }
 
-@keyframes fadeIn {
+@keyframes addressModalFadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
 /* ========================================
-   MODAL CONTENT - DESKTOP CENTERED
+   MODAL CONTAINER
 ======================================== */
-.address-modal-content {
+.address-modal-container {
   background: white;
   border-radius: 20px;
   width: 90%;
@@ -36,11 +36,11 @@
   display: flex;
   flex-direction: column;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  animation: scaleIn 0.25s ease;
+  animation: addressModalScaleIn 0.25s ease;
   position: relative;
 }
 
-@keyframes scaleIn {
+@keyframes addressModalScaleIn {
   from { 
     transform: scale(0.95);
     opacity: 0;
@@ -52,9 +52,9 @@
 }
 
 /* ========================================
-   STICKY HEADER
+   MODAL HEADER
 ======================================== */
-.modal-header {
+.address-modal-header {
   padding: 20px 24px;
   border-bottom: 2px solid #e2e8f0;
   display: flex;
@@ -68,7 +68,7 @@
   flex-shrink: 0;
 }
 
-.modal-header h2 {
+.address-modal-title {
   font-size: 1.5rem;
   font-weight: 700;
   color: #1a202c;
@@ -76,7 +76,7 @@
   letter-spacing: -0.5px;
 }
 
-.modal-close-btn {
+.address-modal-close {
   background: #f7fafc;
   border: none;
   width: 40px;
@@ -93,19 +93,19 @@
   flex-shrink: 0;
 }
 
-.modal-close-btn:hover {
+.address-modal-close:hover {
   background: #e2e8f0;
   transform: rotate(90deg);
 }
 
-.modal-close-btn:active {
+.address-modal-close:active {
   transform: rotate(90deg) scale(0.9);
 }
 
 /* ========================================
-   SCROLLABLE BODY
+   MODAL BODY
 ======================================== */
-.modal-body {
+.address-modal-body {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
@@ -113,32 +113,32 @@
 }
 
 /* Custom Scrollbar */
-.modal-body::-webkit-scrollbar {
+.address-modal-body::-webkit-scrollbar {
   width: 8px;
 }
 
-.modal-body::-webkit-scrollbar-track {
+.address-modal-body::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.modal-body::-webkit-scrollbar-thumb {
+.address-modal-body::-webkit-scrollbar-thumb {
   background: #cbd5e0;
   border-radius: 4px;
 }
 
-.modal-body::-webkit-scrollbar-thumb:hover {
+.address-modal-body::-webkit-scrollbar-thumb:hover {
   background: #a0aec0;
 }
 
 /* ========================================
-   SAVED ADDRESSES - MODERN CARDS
+   SAVED ADDRESSES SECTION
 ======================================== */
-.saved-addresses {
+.address-modal-saved {
   padding: 24px;
   background: white;
 }
 
-.saved-addresses h3 {
+.address-modal-saved-title {
   font-size: 0.75rem;
   font-weight: 700;
   color: #718096;
@@ -147,13 +147,16 @@
   margin: 0 0 16px 0;
 }
 
-.saved-addresses-list {
+.address-modal-saved-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.saved-address-item {
+/* ========================================
+   ADDRESS CARDS
+======================================== */
+.address-modal-card {
   display: flex;
   gap: 16px;
   padding: 18px;
@@ -166,7 +169,7 @@
   overflow: hidden;
 }
 
-.saved-address-item::before {
+.address-modal-card::before {
   content: '';
   position: absolute;
   left: 0;
@@ -177,28 +180,29 @@
   transition: all 0.2s ease;
 }
 
-.saved-address-item:hover {
+.address-modal-card:hover {
   border-color: #4CAF50;
   background: white;
   transform: translateX(4px);
   box-shadow: 0 4px 12px rgba(76, 175, 80, 0.15);
 }
 
-.saved-address-item:hover::before {
+.address-modal-card:hover::before {
   background: #4CAF50;
 }
 
-.saved-address-item.selected {
+.address-modal-card--selected {
   border-color: #4CAF50;
   background: #f0fdf4;
   box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
 }
 
-.saved-address-item.selected::before {
+.address-modal-card--selected::before {
   background: #4CAF50;
 }
 
-.address-radio {
+/* Radio Button */
+.address-modal-card-radio {
   width: 24px;
   height: 24px;
   min-width: 24px;
@@ -212,46 +216,47 @@
   margin-top: 2px;
 }
 
-.saved-address-item.selected .address-radio {
+.address-modal-card--selected .address-modal-card-radio {
   border-color: #4CAF50;
   border-width: 2px;
   background: #4CAF50;
 }
 
-.radio-dot {
+.address-modal-card-radio-dot {
   width: 8px;
   height: 8px;
   background: white;
   border-radius: 50%;
-  animation: dotPop 0.2s ease;
+  animation: addressModalDotPop 0.2s ease;
 }
 
-@keyframes dotPop {
+@keyframes addressModalDotPop {
   0% { transform: scale(0); }
   50% { transform: scale(1.2); }
   100% { transform: scale(1); }
 }
 
-.address-info {
+/* Card Info */
+.address-modal-card-info {
   flex: 1;
   min-width: 0;
 }
 
-.addr-name {
+.address-modal-card-name {
   font-weight: 700;
   font-size: 1rem;
   color: #1a202c;
   margin: 0 0 8px 0;
 }
 
-.addr-text {
+.address-modal-card-text {
   color: #4a5568;
   font-size: 0.875rem;
   margin: 4px 0;
   line-height: 1.5;
 }
 
-.addr-phone {
+.address-modal-card-phone {
   color: #718096;
   font-size: 0.8rem;
   margin: 8px 0 0 0;
@@ -261,21 +266,21 @@
   gap: 6px;
 }
 
-.addr-phone::before {
+.address-modal-card-phone::before {
   content: '📞';
   font-size: 0.75rem;
 }
 
 /* ========================================
-   ADD NEW ADDRESS FORM - MODERN DESIGN
+   FORM SECTION
 ======================================== */
-.add-new-address {
+.address-modal-form-section {
   padding: 24px;
-  padding-bottom: 32px; /* Extra bottom space for button */
+  padding-bottom: 32px;
   background: #f8fafc;
 }
 
-.add-new-address h3 {
+.address-modal-form-title {
   font-size: 0.75rem;
   font-weight: 700;
   color: #718096;
@@ -284,20 +289,23 @@
   margin: 0 0 20px 0;
 }
 
-.address-form {
+.address-modal-form {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding-bottom: 20px; /* Extra space after form */
+  padding-bottom: 20px;
 }
 
-.form-group {
+/* ========================================
+   FORM INPUTS
+======================================== */
+.address-modal-input-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.form-group label {
+.address-modal-label {
   font-size: 0.875rem;
   font-weight: 600;
   color: #2d3748;
@@ -306,7 +314,7 @@
   gap: 4px;
 }
 
-.form-group input {
+.address-modal-input {
   width: 100%;
   padding: 14px 16px;
   border: 2px solid #e2e8f0;
@@ -318,29 +326,32 @@
   font-family: inherit;
 }
 
-.form-group input:hover {
+.address-modal-input:hover {
   border-color: #cbd5e0;
 }
 
-.form-group input:focus {
+.address-modal-input:focus {
   outline: none;
   border-color: #4CAF50;
   box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.1);
   background: white;
 }
 
-.form-group input::placeholder {
+.address-modal-input::placeholder {
   color: #a0aec0;
   font-weight: 400;
 }
 
-.form-row {
+.address-modal-input-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
 }
 
-.submit-address-btn {
+/* ========================================
+   SUBMIT BUTTON
+======================================== */
+.address-modal-submit {
   background: linear-gradient(135deg, #4CAF50, #2E7D32);
   color: white;
   padding: 16px 24px;
@@ -351,14 +362,14 @@
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 8px;
-  margin-bottom: 8px; /* Space at bottom */
+  margin-bottom: 8px;
   box-shadow: 0 4px 14px rgba(76, 175, 80, 0.4);
   width: 100%;
   position: relative;
   overflow: hidden;
 }
 
-.submit-address-btn::before {
+.address-modal-submit::before {
   content: '';
   position: absolute;
   top: 50%;
@@ -371,17 +382,17 @@
   transition: width 0.6s, height 0.6s;
 }
 
-.submit-address-btn:hover::before {
+.address-modal-submit:hover::before {
   width: 300px;
   height: 300px;
 }
 
-.submit-address-btn:hover {
+.address-modal-submit:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5);
 }
 
-.submit-address-btn:active {
+.address-modal-submit:active {
   transform: translateY(0);
 }
 
@@ -389,16 +400,16 @@
    RESPONSIVE - TABLET (768px - 991px)
 ======================================== */
 @media (max-width: 991px) {
-  .address-modal-content {
+  .address-modal-container {
     max-width: 85%;
     max-height: 85vh;
   }
 
-  .modal-header {
+  .address-modal-header {
     padding: 18px 20px;
   }
 
-  .modal-header h2 {
+  .address-modal-title {
     font-size: 1.35rem;
   }
 }
@@ -407,20 +418,20 @@
    RESPONSIVE - MOBILE (≤ 767px)
 ======================================== */
 @media (max-width: 767px) {
-  .modal-overlay {
+  .address-modal-overlay {
     align-items: flex-end;
     padding: 0;
   }
 
-  .address-modal-content {
+  .address-modal-container {
     max-width: 100%;
     width: 100%;
-    max-height: 90vh; /* Reduced from 92vh for better visibility */
+    max-height: 90vh;
     border-radius: 24px 24px 0 0;
-    animation: slideUpMobile 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+    animation: addressModalSlideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1);
   }
 
-  @keyframes slideUpMobile {
+  @keyframes addressModalSlideUp {
     from { 
       transform: translateY(100%);
       opacity: 0;
@@ -431,71 +442,71 @@
     }
   }
 
-  .modal-header {
+  .address-modal-header {
     padding: 16px 20px 14px 20px;
     border-radius: 24px 24px 0 0;
   }
 
-  .modal-header h2 {
+  .address-modal-title {
     font-size: 1.25rem;
   }
 
-  .modal-close-btn {
+  .address-modal-close {
     width: 36px;
     height: 36px;
     font-size: 1.25rem;
   }
 
-  .saved-addresses {
+  .address-modal-saved {
     padding: 20px;
   }
 
-  .add-new-address {
+  .address-modal-form-section {
     padding: 20px;
-    padding-bottom: 40px; /* Extra space for mobile */
+    padding-bottom: 40px;
   }
 
-  .saved-addresses h3,
-  .add-new-address h3 {
+  .address-modal-saved-title,
+  .address-modal-form-title {
     font-size: 0.7rem;
   }
 
-  .saved-address-item {
+  .address-modal-card {
     padding: 16px;
   }
 
-  .address-radio {
+  .address-modal-card-radio {
     width: 22px;
     height: 22px;
     min-width: 22px;
   }
 
-  .addr-name {
+  .address-modal-card-name {
     font-size: 0.95rem;
   }
 
-  .addr-text {
+  .address-modal-card-text {
     font-size: 0.825rem;
   }
 
-  .addr-phone {
+  .address-modal-card-phone {
     font-size: 0.75rem;
   }
 
-  .form-row {
+  .address-modal-input-row {
     grid-template-columns: 1fr;
     gap: 20px;
   }
 
-  .form-group input {
+  .address-modal-input {
     padding: 13px 14px;
-    font-size: 16px; /* Prevents zoom on iOS */
+    font-size: 16px;
   }
 
-  .submit-address-btn {
+  .address-modal-submit {
     padding: 15px 20px;
     font-size: 0.95rem;
-    margin-bottom: 16px; /* More space on mobile */
+    margin-bottom: 16px;
   }
 }
 
@@ -503,58 +514,58 @@
    RESPONSIVE - SMALL MOBILE (≤ 480px)
 ======================================== */
 @media (max-width: 480px) {
-  .address-modal-content {
-    max-height: 88vh; /* Reduced for better button visibility */
+  .address-modal-container {
+    max-height: 88vh;
   }
 
-  .modal-header {
+  .address-modal-header {
     padding: 14px 18px 12px 18px;
   }
 
-  .modal-header h2 {
+  .address-modal-title {
     font-size: 1.15rem;
   }
 
-  .modal-close-btn {
+  .address-modal-close {
     width: 34px;
     height: 34px;
   }
 
-  .saved-addresses {
+  .address-modal-saved {
     padding: 18px;
   }
 
-  .add-new-address {
+  .address-modal-form-section {
     padding: 18px;
-    padding-bottom: 36px; /* Extra space for small screens */
+    padding-bottom: 36px;
   }
 
-  .saved-address-item {
+  .address-modal-card {
     padding: 14px;
     gap: 14px;
   }
 
-  .addr-name {
+  .address-modal-card-name {
     font-size: 0.9rem;
     margin-bottom: 6px;
   }
 
-  .addr-text {
+  .address-modal-card-text {
     font-size: 0.8rem;
   }
 
-  .form-group label {
+  .address-modal-label {
     font-size: 0.8rem;
   }
 
-  .form-group input {
+  .address-modal-input {
     padding: 12px;
     font-size: 16px;
   }
 
-  .submit-address-btn {
+  .address-modal-submit {
     padding: 14px 18px;
-    margin-bottom: 12px; /* Ensure visibility */
+    margin-bottom: 12px;
   }
 }
 
@@ -562,36 +573,36 @@
    RESPONSIVE - TINY SCREENS (≤ 360px)
 ======================================== */
 @media (max-width: 360px) {
-  .address-modal-content {
-    max-height: 86vh; /* More conservative height */
+  .address-modal-container {
+    max-height: 86vh;
   }
 
-  .modal-header {
+  .address-modal-header {
     padding: 12px 16px;
   }
 
-  .modal-header h2 {
+  .address-modal-title {
     font-size: 1.05rem;
   }
 
-  .saved-addresses {
+  .address-modal-saved {
     padding: 16px;
   }
 
-  .add-new-address {
+  .address-modal-form-section {
     padding: 16px;
-    padding-bottom: 32px; /* Ensure button visibility */
+    padding-bottom: 32px;
   }
 
-  .saved-address-item {
+  .address-modal-card {
     padding: 12px;
   }
 
-  .form-group input {
+  .address-modal-input {
     padding: 11px;
   }
 
-  .submit-address-btn {
+  .address-modal-submit {
     padding: 13px 16px;
     font-size: 0.9rem;
     margin-bottom: 8px;
@@ -599,43 +610,48 @@
 }
 
 /* ========================================
-   ACCESSIBILITY & POLISH
+   ACCESSIBILITY
 ======================================== */
 @media (prefers-reduced-motion: reduce) {
-  * {
+  .address-modal-overlay,
+  .address-modal-container,
+  .address-modal-card,
+  .address-modal-submit {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
 
-.saved-address-item:focus-visible,
-.modal-close-btn:focus-visible,
-.submit-address-btn:focus-visible,
-.form-group input:focus-visible {
+.address-modal-card:focus-visible,
+.address-modal-close:focus-visible,
+.address-modal-submit:focus-visible,
+.address-modal-input:focus-visible {
   outline: 3px solid #4CAF50;
   outline-offset: 2px;
 }
 
-/* Safe area for notched devices */
+/* ========================================
+   SAFE AREA FOR NOTCHED DEVICES
+======================================== */
 @supports (padding: max(0px)) {
-  .modal-header {
+  .address-modal-header {
     padding-left: max(24px, env(safe-area-inset-left));
     padding-right: max(24px, env(safe-area-inset-right));
   }
   
-  .saved-addresses,
-  .add-new-address {
+  .address-modal-saved,
+  .address-modal-form-section {
     padding-left: max(24px, env(safe-area-inset-left));
     padding-right: max(24px, env(safe-area-inset-right));
   }
   
-  .submit-address-btn {
+  .address-modal-submit {
     margin-bottom: max(8px, env(safe-area-inset-bottom, 8px));
   }
   
   @media (max-width: 767px) {
-    .add-new-address {
+    .address-modal-form-section {
       padding-bottom: max(40px, calc(env(safe-area-inset-bottom) + 24px));
     }
   }
