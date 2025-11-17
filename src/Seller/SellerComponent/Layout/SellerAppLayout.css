@@ -1,6 +1,10 @@
 /* ========================================
    SELLER LAYOUT WRAPPER
 ======================================== */
+body {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
 .seller-layout-wrapper {
   display: flex;
   min-height: 100vh;

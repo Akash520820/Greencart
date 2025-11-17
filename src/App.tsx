@@ -10,7 +10,6 @@ import { CartProvider } from './context/CartContext';
 import ClientAppLayout from './Client/ClientsComponent/Layout/ClientAppLayout';
 import Home from './Client/ClientPages/Home';
 import AllProduct from './Client/ClientPages/AllProducts';
-import Contact from './Client/ClientPages/Contact';
 import MyOrders from './Client/ClientPages/MyOrders';
 import Cart from './Client/ClientPages/Cart';
 
@@ -47,10 +46,6 @@ const router = createBrowserRouter([
       {
         path: "/cart",
         element: <Cart />,
-      },
-      {
-        path: "/Contact",
-        element: <Contact />,
       },
       {
         path: "/my-orders",

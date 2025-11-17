@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { assets } from "../../../assets/assets";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import CartBadge from "./CartBadge";
 import AuthModal from "../LogInSignIn/AuthModal";
 import UserAccountDropdown from "./UserAccountDropdown";
@@ -10,6 +10,7 @@ import SearchBar from "./SearchBar";
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [pendingRedirect, setPendingRedirect] = useState(null);
   const { isAuthenticated } = useClientAuth();
@@ -29,6 +30,10 @@ const Navbar = () => {
       setPendingRedirect('/my-orders');
       setShowAuthModal(true);
     }
+  };
+
+  const handleBecomeSellerClick = () => {
+    navigate('/seller/auth');
   };
 
   const handleCloseModal = () => {
@@ -95,13 +100,14 @@ const Navbar = () => {
                   My Orders
                 </Link>
               </li>
+              {/* Become a Seller Button */}
               <li className="nav-item">
-                <Link 
-                  className={`nav-link navbar-link ${isActive('/Contact') ? 'active' : ''}`} 
-                  to="/Contact"
+                <button 
+                  className="nav-link navbar-link navbar-seller-link" 
+                  onClick={handleBecomeSellerClick}
                 >
-                  Contact
-                </Link>
+                  Become a Seller
+                </button>
               </li>
             </ul>
 

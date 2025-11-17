@@ -1,6 +1,11 @@
 /* ========================================
    SELLER AUTH PAGE
 ======================================== */
+body {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
 .seller-auth-page {
   min-height: 100vh;
   display: flex;

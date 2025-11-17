@@ -53,6 +53,20 @@ nav.navbar.navbar-expand-lg.navbar-container {
   font-weight: 600;
 }
 
+/* Become a Seller Button Styling */
+.navbar-seller-link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #FF6B35 !important;
+  font-weight: 600 !important;
+}
+
+.navbar-seller-link:hover {
+  background-color: #fff0ec !important;
+  color: #FF5722 !important;
+}
+
 .navbar-login-btn {
   background: linear-gradient(135deg, #4CAF50, #2E7D32);
   border-radius: 20px;
