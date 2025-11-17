@@ -132,6 +132,27 @@
   color: #198754;
 }
 
+/* Become a Seller Button - Special styling */
+.user-account-dropdown-seller-btn {
+  color: #FF6B35;
+  font-weight: 600;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.user-account-dropdown-seller-btn svg {
+  color: #FF6B35;
+}
+
+.user-account-dropdown-seller-btn:hover {
+  background-color: #fff5f0;
+  color: #FF5722;
+}
+
+.user-account-dropdown-seller-btn:hover svg {
+  color: #FF5722;
+}
+
+/* Logout Button */
 .user-account-dropdown-logout-btn {
   color: #e53e3e;
   border-top: 1px solid #e2e8f0;

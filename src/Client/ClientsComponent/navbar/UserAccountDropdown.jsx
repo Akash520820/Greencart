@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { FaStore } from 'react-icons/fa';
 import { useClientAuth } from '../../../context/ClientAuthContext';
 import './UserAccountDropdown.css';
 
 const UserAccountDropdown = ({ isMobile = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, logout } = useClientAuth();
+  const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
   // Close dropdown when clicking outside
@@ -40,6 +42,11 @@ const UserAccountDropdown = ({ isMobile = false }) => {
   const handleLogout = () => {
     logout();
     setIsOpen(false);
+  };
+
+  const handleBecomeSellerClick = () => {
+    setIsOpen(false);
+    navigate('/seller/auth');
   };
 
   const handleBackdropClick = () => {
@@ -103,6 +110,15 @@ const UserAccountDropdown = ({ isMobile = false }) => {
                 My Orders
               </Link>
             )}
+            
+            {/* Become a Seller Button */}
+            <button 
+              className="user-account-dropdown-item user-account-dropdown-seller-btn"
+              onClick={handleBecomeSellerClick}
+            >
+              <FaStore size={18} />
+              Become a Seller
+            </button>
             
             <button 
               className="user-account-dropdown-item user-account-dropdown-logout-btn"

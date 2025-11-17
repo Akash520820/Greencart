@@ -5,6 +5,7 @@ import { AiFillProduct } from "react-icons/ai";
 import { BsCartFill } from "react-icons/bs";
 import { IoBag } from "react-icons/io5";
 import { MdAccountCircle } from "react-icons/md";
+import { FaStore } from "react-icons/fa"; // Import store icon for seller
 import { useCart } from '../../../context/CartContext';
 import { useClientAuth } from '../../../context/ClientAuthContext';
 import AuthModal from '../LogInSignIn/AuthModal';
@@ -83,6 +84,11 @@ const BottomNavbar = () => {
       setPendingRedirect('/my-orders');
       setTimeout(() => setShowAuthModal(true), 100);
     }
+  };
+
+  const handleBecomeSellerClick = () => {
+    setShowUserMenu(false);
+    navigate('/seller/auth');
   };
 
   const handleLogout = () => {
@@ -196,6 +202,15 @@ const BottomNavbar = () => {
                     </div>
                   </div>
                 </div>
+                
+                {/* Become a Seller Button */}
+                <button 
+                  className="bottom-navbar-menu-item bottom-navbar-seller-btn"
+                  onClick={handleBecomeSellerClick}
+                >
+                  <FaStore size={18} />
+                  Become a Seller
+                </button>
                 
                 <button 
                   className="bottom-navbar-menu-item bottom-navbar-logout-btn"

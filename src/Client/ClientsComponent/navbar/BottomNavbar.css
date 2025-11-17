@@ -260,6 +260,26 @@
   color: #4CAF50;
 }
 
+/* Become a Seller Button - Special styling */
+.bottom-navbar-seller-btn {
+  color: #FF6B35;
+  font-weight: 600;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.bottom-navbar-seller-btn svg {
+  color: #FF6B35;
+}
+
+.bottom-navbar-seller-btn:hover {
+  background-color: #fff5f0;
+  color: #FF5722;
+}
+
+.bottom-navbar-seller-btn:hover svg {
+  color: #FF5722;
+}
+
 /* Logout Button */
 .bottom-navbar-logout-btn {
   color: #e53e3e;
@@ -624,6 +644,14 @@
   
   .bottom-navbar-menu-item:hover {
     background-color: #3a3a3a;
+  }
+  
+  .bottom-navbar-seller-btn {
+    border-bottom-color: #3a3a3a;
+  }
+  
+  .bottom-navbar-seller-btn:hover {
+    background-color: #2d2416;
   }
   
   .bottom-navbar-logout-btn {

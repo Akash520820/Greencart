@@ -1,7 +1,7 @@
 /* ========================================
    SELLER LAYOUT WRAPPER
 ======================================== */
-body {
+body:has(.seller-layout-wrapper) {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
 }

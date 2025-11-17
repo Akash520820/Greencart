@@ -1,7 +1,7 @@
 /* ========================================
    SELLER AUTH PAGE
 ======================================== */
-body {
+body:has(.seller-auth-page) {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
 }
