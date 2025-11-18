@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSellerAuth } from '../../context/SellerAuthContext';
+import SellerAuthHeader from '../../Seller/SellerComponent/SellerAuthHeader';
+import SellerAuthForm from '../../Seller/SellerComponent/SellerAuthForm';
+import ErrorMessage from '../../Seller/SellerComponent/ErrorMessage';
 import './SellerAuthPage.css';
 
 const SellerAuthPage = () => {
@@ -17,15 +20,17 @@ const SellerAuthPage = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
+  // Memoized change handler
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
     setError('');
-  };
+  }, []);
 
+  // Form submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -57,7 +62,8 @@ const SellerAuthPage = () => {
     }
   };
 
-  const toggleMode = () => {
+  // Toggle between login and signup
+  const toggleMode = useCallback(() => {
     setIsLogin(!isLogin);
     setError('');
     setFormData({
@@ -67,143 +73,27 @@ const SellerAuthPage = () => {
       shopName: '',
       phone: ''
     });
-  };
+  }, [isLogin]);
 
   return (
     <div className="seller-auth-page">
       <div className="seller-auth-container">
         <div className="seller-auth-content">
-          {/* Header */}
-          <div className="seller-auth-header">
-            <h3 className="seller-auth-title">
-              <span className="text-success">Seller</span>{' '}
-              {isLogin ? 'Login' : 'Sign Up'}
-            </h3>
-            <button 
-              className="seller-auth-back-btn" 
-              onClick={() => navigate('/')}
-              title="Back to Home"
-            >
-              ×
-            </button>
-          </div>
+          {/* Header Component */}
+          <SellerAuthHeader isLogin={isLogin} />
 
-          {/* Error Message */}
-          {error && (
-            <div className="seller-auth-error">
-              {error}
-            </div>
-          )}
+          {/* Error Message Component */}
+          <ErrorMessage error={error} />
 
-          {/* Form */}
-          <form onSubmit={handleSubmit}>
-            {!isLogin && (
-              <div className="auth-form-input-group">
-                <label>Full Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="Enter your name"
-                  className="auth-form-input"
-                  required
-                />
-              </div>
-            )}
-
-            <div className="auth-form-input-group">
-              <label>Email</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Enter your email"
-                className="auth-form-input"
-                required
-              />
-            </div>
-
-            <div className="auth-form-input-group">
-              <label>Password</label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-                className="auth-form-input"
-                required
-              />
-            </div>
-
-            {!isLogin && (
-              <>
-                <div className="auth-form-input-group">
-                  <label>Shop Name</label>
-                  <input
-                    type="text"
-                    name="shopName"
-                    value={formData.shopName}
-                    onChange={handleChange}
-                    placeholder="Enter your shop name"
-                    className="auth-form-input"
-                    required
-                  />
-                </div>
-
-                <div className="auth-form-input-group">
-                  <label>Phone Number</label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    placeholder="Enter your phone number"
-                    className="auth-form-input"
-                    required
-                  />
-                </div>
-              </>
-            )}
-
-            {/* Toggle Text */}
-            <div className="auth-form-toggle-text">
-              {isLogin ? (
-                <>
-                  Don't have an account?{' '}
-                  <button 
-                    type="button" 
-                    className="auth-form-toggle-link" 
-                    onClick={toggleMode}
-                  >
-                    Sign up here
-                  </button>
-                </>
-              ) : (
-                <>
-                  Already have an account?{' '}
-                  <button 
-                    type="button" 
-                    className="auth-form-toggle-link" 
-                    onClick={toggleMode}
-                  >
-                    Login here
-                  </button>
-                </>
-              )}
-            </div>
-
-            {/* Submit Button */}
-            <button 
-              type="submit" 
-              className="auth-form-submit-btn"
-              disabled={loading}
-            >
-              {loading ? 'Please wait...' : (isLogin ? 'Login' : 'Create Account')}
-            </button>
-          </form>
+          {/* Form Component */}
+          <SellerAuthForm 
+            isLogin={isLogin}
+            formData={formData}
+            loading={loading}
+            handleChange={handleChange}
+            handleSubmit={handleSubmit}
+            toggleMode={toggleMode}
+          />
         </div>
       </div>
     </div>
