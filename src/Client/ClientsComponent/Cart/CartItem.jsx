@@ -1,6 +1,10 @@
+// CartItem.jsx - Updated with clickable product
 import React, { memo } from 'react';
+import { useNavigate } from 'react-router-dom'; // 👈 Add this
 
 const CartItem = memo(({ item, onQuantityChange, onRemove }) => {
+  const navigate = useNavigate(); // 👈 Add this
+
   const discountPercentage = item.offerPrice 
     ? Math.round(((item.price - item.offerPrice) / item.price) * 100)
     : 0;
@@ -8,14 +12,29 @@ const CartItem = memo(({ item, onQuantityChange, onRemove }) => {
   const currentPrice = item.offerPrice || item.price;
   const subtotal = currentPrice * item.quantity;
 
+  // 👈 Add click handler
+  const handleProductClick = () => {
+    navigate(`/product/${item._id}`);
+  };
+
   return (
     <div className="cart-item">
-      <div className="cart-item-image-wrapper">
+      <div 
+        className="cart-item-image-wrapper"
+        onClick={handleProductClick} // 👈 Make image clickable
+        style={{ cursor: 'pointer' }}
+      >
         <img src={item.image[0]} alt={item.name} className="cart-item-image" />
       </div>
       
       <div className="cart-item-details">
-        <h3 className="cart-item-name">{item.name}</h3>
+        <h3 
+          className="cart-item-name"
+          onClick={handleProductClick} // 👈 Make name clickable
+          style={{ cursor: 'pointer' }}
+        >
+          {item.name}
+        </h3>
         <p className="cart-item-category">{item.category}</p>
         
         <div className="cart-item-price">

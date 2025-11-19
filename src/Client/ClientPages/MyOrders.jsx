@@ -1,36 +1,39 @@
-// MyOrders.jsx - Fixed with OrderContext
+// MyOrders.jsx - FIXED with proper loading
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import { useClientAuth } from '../../context/ClientAuthContext';
-import { useOrders } from '../../context/OrderContext'; // 👈 Add this
+import { useOrders } from '../../context/OrderContext';
 import './MyOrders.css';
 
 const MyOrders = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useClientAuth();
-  const { getUserOrders, updateOrderStatus } = useOrders(); // 👈 Use OrderContext
+  const { getUserOrders, updateOrderStatus, loading: ordersLoading } = useOrders(); // 👈 Get loading state
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [filterStatus, setFilterStatus] = useState('All');
+  const [isLoading, setIsLoading] = useState(true); // 👈 Local loading state
 
+  // 👈 FIXED: Wait for auth and orders to load
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/');
       return;
     }
 
-    // Load orders from OrderContext
-    if (user?.email) {
+    // Wait for orders context to finish loading
+    if (!ordersLoading && user?.email) {
       loadOrders();
+      setIsLoading(false);
     }
-  }, [user, isAuthenticated, navigate]);
+  }, [user, isAuthenticated, ordersLoading, navigate]);
 
   // Listen for order updates
   useEffect(() => {
     const handleOrdersUpdate = () => {
-      if (user?.email) {
+      if (user?.email && !ordersLoading) {
         loadOrders();
       }
     };
@@ -40,12 +43,13 @@ const MyOrders = () => {
     return () => {
       window.removeEventListener('ordersUpdated', handleOrdersUpdate);
     };
-  }, [user?.email]);
+  }, [user?.email, ordersLoading]);
 
   const loadOrders = () => {
     if (user?.email) {
       const userOrders = getUserOrders(user.email);
       setOrders(userOrders);
+      console.log('Loaded user orders:', userOrders.length); // Debug log
     }
   };
 
@@ -74,6 +78,11 @@ const MyOrders = () => {
     setShowDetailsModal(true);
   };
 
+  const handleProductClick = (productId, e) => {
+    if (e) e.stopPropagation();
+    navigate(`/product/${productId}`);
+  };
+
   const handleCancelOrder = (orderId) => {
     toast((t) => (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -98,9 +107,8 @@ const MyOrders = () => {
           </button>
           <button
             onClick={() => {
-              // Use OrderContext to update status
               updateOrderStatus(orderId, 'Cancelled');
-              loadOrders(); // Reload orders
+              loadOrders();
               toast.dismiss(t.id);
               toast.success('Order cancelled successfully', {
                 duration: 3000,
@@ -149,8 +157,22 @@ const MyOrders = () => {
     ? orders 
     : orders.filter(order => order.status === filterStatus);
 
+  // 👈 Show loading state
   if (!isAuthenticated) {
     return null;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="my-orders-page">
+        <div className="container">
+          <div className="orders-loading">
+            <div className="spinner"></div>
+            <p>Loading your orders...</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -164,7 +186,6 @@ const MyOrders = () => {
           </p>
         </div>
 
-        {/* Filter Buttons */}
         <div className="orders-filters">
           {['All', 'Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'].map(status => (
             <button
@@ -177,7 +198,6 @@ const MyOrders = () => {
           ))}
         </div>
 
-        {/* Orders List */}
         {filteredOrders.length === 0 ? (
           <div className="no-orders">
             <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="#cbd5e0" strokeWidth="1.5">
@@ -214,10 +234,14 @@ const MyOrders = () => {
                 </div>
 
                 <div className="order-card-body">
-                  {/* Order Items Preview */}
                   <div className="order-items-preview">
                     {order.items.slice(0, 3).map((item, index) => (
-                      <div key={index} className="order-item-mini">
+                      <div 
+                        key={index} 
+                        className="order-item-mini"
+                        onClick={() => handleProductClick(item.product._id)}
+                        style={{ cursor: 'pointer' }}
+                      >
                         <img src={item.product.image[0] || item.product.image} alt={item.product.name} />
                         <div className="item-mini-details">
                           <p className="item-mini-name">{item.product.name}</p>
@@ -232,7 +256,6 @@ const MyOrders = () => {
                     )}
                   </div>
 
-                  {/* Order Info */}
                   <div className="order-info-grid">
                     <div className="order-info-item">
                       <span className="info-label">Total Amount</span>
@@ -289,7 +312,6 @@ const MyOrders = () => {
               </div>
 
               <div className="modal-body">
-                {/* Order Summary */}
                 <div className="details-section">
                   <div className="section-title-row">
                     <h3>Order Information</h3>
@@ -320,7 +342,6 @@ const MyOrders = () => {
                   </div>
                 </div>
 
-                {/* Delivery Address */}
                 <div className="details-section">
                   <h3>Delivery Address</h3>
                   <div className="address-box">
@@ -332,12 +353,16 @@ const MyOrders = () => {
                   </div>
                 </div>
 
-                {/* Order Items */}
                 <div className="details-section">
                   <h3>Items ({selectedOrder.items.length})</h3>
                   <div className="order-items-list">
                     {selectedOrder.items.map((item, index) => (
-                      <div key={index} className="order-detail-item">
+                      <div 
+                        key={index} 
+                        className="order-detail-item"
+                        onClick={(e) => handleProductClick(item.product._id, e)}
+                        style={{ cursor: 'pointer' }}
+                      >
                         <img src={item.product.image[0] || item.product.image} alt={item.product.name} className="item-image" />
                         <div className="item-details">
                           <h4>{item.product.name}</h4>
@@ -352,7 +377,6 @@ const MyOrders = () => {
                   </div>
                 </div>
 
-                {/* Price Breakdown */}
                 <div className="details-section">
                   <h3>Payment Summary</h3>
                   <div className="price-breakdown">

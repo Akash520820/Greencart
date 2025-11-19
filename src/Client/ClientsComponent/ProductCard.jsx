@@ -1,9 +1,12 @@
+// ProductCard.jsx - Updated with click navigation
 import React, { useState, useEffect, memo } from 'react';
+import { useNavigate } from 'react-router-dom'; // 👈 Add this
 import { useCart } from '../../context/CartContext';
 import { useClientAuth } from '../../context/ClientAuthContext';
 import './ProductCard.css';
 
 const ProductCard = memo(({ product, onLoginRequired }) => {
+  const navigate = useNavigate(); // 👈 Add this
   const { addToCart, cartItems } = useCart();
   const { isAuthenticated } = useClientAuth();
   const [isAdding, setIsAdding] = useState(false);
@@ -15,7 +18,9 @@ const ProductCard = memo(({ product, onLoginRequired }) => {
     setIsInCart(inCart);
   }, [cartItems, product._id]);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e) => {
+    e.stopPropagation(); // 👈 Prevent card click when clicking button
+    
     // Check if user is authenticated
     if (!isAuthenticated) {
       // Trigger login modal with this product
@@ -36,12 +41,21 @@ const ProductCard = memo(({ product, onLoginRequired }) => {
     }, 600);
   };
 
+  // 👈 Add click handler to navigate to product details
+  const handleCardClick = () => {
+    navigate(`/product/${product._id}`);
+  };
+
   const discountPercentage = product.offerPrice 
     ? Math.round(((product.price - product.offerPrice) / product.price) * 100)
     : 0;
 
   return (
-    <div className="product-card-bestseller">
+    <div 
+      className="product-card-bestseller" 
+      onClick={handleCardClick} // 👈 Add click handler
+      style={{ cursor: 'pointer' }} // 👈 Add cursor pointer
+    >
       <div className="product-card-image-container">
         <img 
           src={product.image[0]} 
@@ -100,7 +114,7 @@ const ProductCard = memo(({ product, onLoginRequired }) => {
           
           <button 
             className={`product-card-add-btn ${isAdding ? 'adding' : ''} ${isInCart ? 'in-cart' : ''}`}
-            onClick={handleAddToCart}
+            onClick={handleAddToCart} // 👈 Updated to use new handler with stopPropagation
             disabled={isAdding || isInCart}
           >
             {isInCart ? (

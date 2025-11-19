@@ -1,3 +1,4 @@
+// App.tsx - Updated with Product Details Route
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import './App.css';
 
@@ -6,12 +7,13 @@ import { ClientAuthProvider } from './context/ClientAuthContext';
 import { SellerAuthProvider } from './context/SellerAuthContext';
 import { CartProvider } from './context/CartContext';
 import { ProductProvider } from './context/ProductContext';
-import { OrderProvider } from './context/OrderContext'; // 👈 Add this
+import { OrderProvider } from './context/OrderContext';
 
 // Client Layout & Pages
 import ClientAppLayout from './Client/ClientsComponent/Layout/ClientAppLayout';
 import Home from './Client/ClientPages/Home';
 import AllProduct from './Client/ClientPages/AllProducts';
+import ProductDetails from './Client/ClientPages/ProductDetails'; // 👈 Add this
 import MyOrders from './Client/ClientPages/MyOrders';
 import Cart from './Client/ClientPages/Cart';
 
@@ -44,6 +46,10 @@ const router = createBrowserRouter([
       {
         path: "/AllProduct",
         element: <AllProduct />,
+      },
+      {
+        path: "/product/:productId", // 👈 Add Product Details Route
+        element: <ProductDetails />,
       },
       {
         path: "/cart",
@@ -102,7 +108,7 @@ function App() {
     <ClientAuthProvider>
       <SellerAuthProvider>
         <ProductProvider>
-          <OrderProvider>  {/* 👈 Add OrderProvider */}
+          <OrderProvider>
             <CartProvider>
               <RouterProvider router={router} />
             </CartProvider>

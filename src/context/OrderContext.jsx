@@ -1,21 +1,28 @@
+// OrderContext.jsx - FIXED VERSION
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const OrderContext = createContext();
 
 export const OrderProvider = ({ children }) => {
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // 👈 Keep loading state
 
-  // Load all orders from localStorage
+  // 👈 FIXED: Better initialization
   useEffect(() => {
     const loadOrders = () => {
       try {
         const savedOrders = localStorage.getItem('allOrders');
         if (savedOrders) {
-          setOrders(JSON.parse(savedOrders));
+          const parsedOrders = JSON.parse(savedOrders);
+          setOrders(parsedOrders);
+          console.log('Orders loaded from localStorage:', parsedOrders.length); // Debug log
+        } else {
+          console.log('No orders found in localStorage'); // Debug log
+          setOrders([]);
         }
       } catch (error) {
         console.error('Error loading orders:', error);
+        setOrders([]);
       } finally {
         setLoading(false);
       }
@@ -23,6 +30,18 @@ export const OrderProvider = ({ children }) => {
 
     loadOrders();
   }, []);
+
+  // 👈 FIXED: Save to localStorage immediately after state update
+  useEffect(() => {
+    if (!loading) { // Only save after initial load
+      try {
+        localStorage.setItem('allOrders', JSON.stringify(orders));
+        console.log('Orders saved to localStorage:', orders.length); // Debug log
+      } catch (error) {
+        console.error('Error saving orders:', error);
+      }
+    }
+  }, [orders, loading]);
 
   // Client: Create new order
   const createOrder = (orderData) => {
@@ -32,7 +51,7 @@ export const OrderProvider = ({ children }) => {
       userId: orderData.userId,
       userName: orderData.userName,
       userEmail: orderData.userEmail,
-      items: orderData.items, // Array of { product, quantity, priceAtOrder }
+      items: orderData.items,
       address: orderData.address,
       paymentMethod: orderData.paymentMethod,
       paymentDetails: orderData.paymentDetails,
@@ -50,54 +69,54 @@ export const OrderProvider = ({ children }) => {
       updatedAt: new Date().toISOString()
     };
 
-    const updatedOrders = [newOrder, ...orders];
-    setOrders(updatedOrders);
-    localStorage.setItem('allOrders', JSON.stringify(updatedOrders));
-
-    // Trigger event for real-time updates
-    window.dispatchEvent(new Event('ordersUpdated'));
+    setOrders(prevOrders => {
+      const updatedOrders = [newOrder, ...prevOrders];
+      // Trigger event for real-time updates
+      window.dispatchEvent(new Event('ordersUpdated'));
+      return updatedOrders;
+    });
 
     return newOrder;
   };
 
   // Seller: Update order status
   const updateOrderStatus = (orderId, newStatus) => {
-    const updatedOrders = orders.map(order =>
-      order._id === orderId
-        ? { 
-            ...order, 
-            status: newStatus,
-            updatedAt: new Date().toISOString()
-          }
-        : order
-    );
-
-    setOrders(updatedOrders);
-    localStorage.setItem('allOrders', JSON.stringify(updatedOrders));
-    window.dispatchEvent(new Event('ordersUpdated'));
+    setOrders(prevOrders => {
+      const updatedOrders = prevOrders.map(order =>
+        order._id === orderId
+          ? { 
+              ...order, 
+              status: newStatus,
+              updatedAt: new Date().toISOString()
+            }
+          : order
+      );
+      window.dispatchEvent(new Event('ordersUpdated'));
+      return updatedOrders;
+    });
   };
 
   // Seller: Update payment status
   const updatePaymentStatus = (orderId, paymentStatus) => {
-    const updatedOrders = orders.map(order =>
-      order._id === orderId
-        ? { 
-            ...order, 
-            paymentStatus,
-            updatedAt: new Date().toISOString()
-          }
-        : order
-    );
-
-    setOrders(updatedOrders);
-    localStorage.setItem('allOrders', JSON.stringify(updatedOrders));
-    window.dispatchEvent(new Event('ordersUpdated'));
+    setOrders(prevOrders => {
+      const updatedOrders = prevOrders.map(order =>
+        order._id === orderId
+          ? { 
+              ...order, 
+              paymentStatus,
+              updatedAt: new Date().toISOString()
+            }
+          : order
+      );
+      window.dispatchEvent(new Event('ordersUpdated'));
+      return updatedOrders;
+    });
   };
 
   // Client: Get user's orders
-  const getUserOrders = (userId) => {
+  const getUserOrders = (userEmail) => {
     return orders
-      .filter(order => order.userId === userId)
+      .filter(order => order.userEmail === userEmail)
       .sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
   };
 
@@ -138,10 +157,19 @@ export const OrderProvider = ({ children }) => {
 
   // Listen for storage changes (sync across tabs)
   useEffect(() => {
-    const handleStorageChange = () => {
-      const savedOrders = localStorage.getItem('allOrders');
-      if (savedOrders) {
-        setOrders(JSON.parse(savedOrders));
+    const handleStorageChange = (e) => {
+      // Only reload if allOrders changed
+      if (e.key === 'allOrders' || e.type === 'ordersUpdated') {
+        const savedOrders = localStorage.getItem('allOrders');
+        if (savedOrders) {
+          try {
+            const parsedOrders = JSON.parse(savedOrders);
+            setOrders(parsedOrders);
+            console.log('Orders reloaded from storage event'); // Debug log
+          } catch (error) {
+            console.error('Error parsing orders from storage event:', error);
+          }
+        }
       }
     };
 
