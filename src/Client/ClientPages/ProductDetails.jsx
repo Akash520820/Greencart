@@ -116,18 +116,7 @@ const ProductDetails = () => {
       <Toaster />
       <div className="product-details-page">
         <div className="container">
-          {/* Breadcrumb */}
-          <div className="breadcrumb">
-            <span onClick={() => navigate('/')} className="breadcrumb-link">Home</span>
-            <span className="breadcrumb-separator">/</span>
-            <span onClick={() => navigate('/AllProduct')} className="breadcrumb-link">Products</span>
-            <span className="breadcrumb-separator">/</span>
-            <span onClick={() => navigate(`/AllProduct?category=${product.category}`)} className="breadcrumb-link">
-              {product.category}
-            </span>
-            <span className="breadcrumb-separator">/</span>
-            <span className="breadcrumb-current">{product.name}</span>
-          </div>
+          
 
           {/* Product Details Section */}
           <div className="product-details-container">

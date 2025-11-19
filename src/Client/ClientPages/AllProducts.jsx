@@ -1,30 +1,37 @@
+// AllProducts.jsx - FIXED with proper loading
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useProducts } from '../../context/ProductContext'; // 👈 Use ProductContext
+import { useProducts } from '../../context/ProductContext';
 import ProductCard from '../ClientsComponent/ProductCard';
 import AuthModal from '../ClientsComponent/LogInSignIn/AuthModal';
 import './AllProduct.css';
 
 const AllProduct = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { getAvailableProducts, getAllCategories } = useProducts(); // 👈 Get from context
+  const { getAvailableProducts, getAllCategories, loading: productsLoading } = useProducts(); // 👈 Get loading state
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [pendingProduct, setPendingProduct] = useState(null);
+  const [isLoading, setIsLoading] = useState(true); // 👈 Local loading state
 
   // Get all unique categories from ProductContext
   const allCategories = getAllCategories();
 
+  // 👈 FIXED: Wait for products to load before displaying
   useEffect(() => {
-    // Load products from context
-    loadProducts();
-  }, []);
+    if (!productsLoading) {
+      loadProducts();
+      setIsLoading(false);
+    }
+  }, [productsLoading]);
 
   useEffect(() => {
     // Listen for product updates
     const handleProductsUpdate = () => {
-      loadProducts();
+      if (!productsLoading) {
+        loadProducts();
+      }
     };
 
     window.addEventListener('productsUpdated', handleProductsUpdate);
@@ -32,7 +39,7 @@ const AllProduct = () => {
     return () => {
       window.removeEventListener('productsUpdated', handleProductsUpdate);
     };
-  }, [selectedCategory]);
+  }, [selectedCategory, productsLoading]);
 
   useEffect(() => {
     // Get category from URL parameter
@@ -40,16 +47,21 @@ const AllProduct = () => {
     
     if (categoryFromUrl) {
       setSelectedCategory(categoryFromUrl);
-      filterProducts(categoryFromUrl);
+      if (!productsLoading) {
+        filterProducts(categoryFromUrl);
+      }
     } else {
       setSelectedCategory('All');
-      loadProducts();
+      if (!productsLoading) {
+        loadProducts();
+      }
     }
-  }, [searchParams]);
+  }, [searchParams, productsLoading]);
 
   const loadProducts = () => {
     const availableProducts = getAvailableProducts();
     setFilteredProducts(availableProducts);
+    console.log('Loaded available products:', availableProducts.length); // Debug log
   };
 
   const filterProducts = (category) => {
@@ -61,6 +73,7 @@ const AllProduct = () => {
       const filtered = availableProducts.filter(product => product.category === category);
       setFilteredProducts(filtered);
     }
+    console.log('Filtered products for category', category, ':', filteredProducts.length); // Debug log
   };
 
   const handleCategoryFilter = (category) => {
@@ -83,6 +96,20 @@ const AllProduct = () => {
   const handleCloseModal = () => {
     setShowAuthModal(false);
   };
+
+  // 👈 Show loading state
+  if (isLoading) {
+    return (
+      <div className="all-products-page">
+        <div className="container">
+          <div className="products-loading">
+            <div className="spinner"></div>
+            <p>Loading products...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

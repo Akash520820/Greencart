@@ -1,3 +1,4 @@
+// ProductContext.jsx - FIXED VERSION
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { dummyProducts } from '../assets/assets';
 
@@ -7,31 +8,50 @@ export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // 👈 FIXED: Better initialization with proper loading state
   useEffect(() => {
     const initializeProducts = () => {
       try {
         const savedProducts = localStorage.getItem('allProducts');
         
         if (savedProducts) {
-          setProducts(JSON.parse(savedProducts));
+          const parsedProducts = JSON.parse(savedProducts);
+          setProducts(parsedProducts);
+          console.log('Products loaded from localStorage:', parsedProducts.length); // Debug log
         } else {
+          // First time - initialize with dummy data
           setProducts(dummyProducts);
-          try {
-            localStorage.setItem('allProducts', JSON.stringify(dummyProducts));
-          } catch (error) {
-            console.error('Failed to save dummy products to localStorage:', error);
-          }
+          localStorage.setItem('allProducts', JSON.stringify(dummyProducts));
+          console.log('Initialized with dummy products:', dummyProducts.length); // Debug log
         }
       } catch (error) {
         console.error('Error loading products:', error);
+        // Fallback to dummy products on error
         setProducts(dummyProducts);
+        try {
+          localStorage.setItem('allProducts', JSON.stringify(dummyProducts));
+        } catch (e) {
+          console.error('Failed to save dummy products:', e);
+        }
       } finally {
-        setLoading(false);
+        setLoading(false); // 👈 Always set loading to false
       }
     };
 
     initializeProducts();
-  }, []);
+  }, []); // Only run once on mount
+
+  // 👈 FIXED: Save to localStorage whenever products change (but only after initial load)
+  useEffect(() => {
+    if (!loading && products.length > 0) {
+      try {
+        localStorage.setItem('allProducts', JSON.stringify(products));
+        console.log('Products saved to localStorage:', products.length); // Debug log
+      } catch (error) {
+        console.error('Error saving products:', error);
+      }
+    }
+  }, [products, loading]);
 
   // Helper function to safely save to localStorage
   const safeLocalStorageSave = (key, data) => {
@@ -72,81 +92,93 @@ export const ProductProvider = ({ children }) => {
       sellerId: productData.sellerId || 'default-seller'
     };
 
-    const updatedProducts = [...products, newProduct];
-    
-    // Try to save to localStorage
-    const saveResult = safeLocalStorageSave('allProducts', updatedProducts);
-    
-    if (!saveResult.success) {
-      // If save failed, throw error to be caught by calling component
-      const error = new Error(saveResult.error);
-      error.name = 'QuotaExceededError';
-      throw error;
-    }
-    
-    // Update state only if save was successful
-    setProducts(updatedProducts);
-    window.dispatchEvent(new Event('productsUpdated'));
-    
+    setProducts(prevProducts => {
+      const updatedProducts = [...prevProducts, newProduct];
+      
+      // Try to save to localStorage
+      const saveResult = safeLocalStorageSave('allProducts', updatedProducts);
+      
+      if (!saveResult.success) {
+        // If save failed, throw error to be caught by calling component
+        const error = new Error(saveResult.error);
+        error.name = 'QuotaExceededError';
+        throw error;
+      }
+      
+      // Trigger event for real-time updates
+      window.dispatchEvent(new Event('productsUpdated'));
+      
+      return updatedProducts;
+    });
+
     return newProduct;
   };
 
   // Seller: Update product
   const updateProduct = (productId, updates) => {
-    const updatedProducts = products.map(product =>
-      product._id === productId
-        ? { 
-            ...product, 
-            ...updates, 
-            updatedAt: new Date().toISOString() 
-          }
-        : product
-    );
+    setProducts(prevProducts => {
+      const updatedProducts = prevProducts.map(product =>
+        product._id === productId
+          ? { 
+              ...product, 
+              ...updates, 
+              updatedAt: new Date().toISOString() 
+            }
+          : product
+      );
 
-    const saveResult = safeLocalStorageSave('allProducts', updatedProducts);
-    
-    if (saveResult.success) {
-      setProducts(updatedProducts);
+      const saveResult = safeLocalStorageSave('allProducts', updatedProducts);
+      
+      if (!saveResult.success) {
+        throw new Error(saveResult.error);
+      }
+      
       window.dispatchEvent(new Event('productsUpdated'));
-    } else {
-      throw new Error(saveResult.error);
-    }
+      
+      return updatedProducts;
+    });
   };
 
   // Seller: Delete product
   const deleteProduct = (productId) => {
-    const updatedProducts = products.filter(product => product._id !== productId);
-    
-    const saveResult = safeLocalStorageSave('allProducts', updatedProducts);
-    
-    if (saveResult.success) {
-      setProducts(updatedProducts);
+    setProducts(prevProducts => {
+      const updatedProducts = prevProducts.filter(product => product._id !== productId);
+      
+      const saveResult = safeLocalStorageSave('allProducts', updatedProducts);
+      
+      if (!saveResult.success) {
+        throw new Error(saveResult.error);
+      }
+      
       window.dispatchEvent(new Event('productsUpdated'));
-    } else {
-      throw new Error(saveResult.error);
-    }
+      
+      return updatedProducts;
+    });
   };
 
   // Seller: Toggle stock status
   const toggleStock = (productId) => {
-    const updatedProducts = products.map(product =>
-      product._id === productId
-        ? { 
-            ...product, 
-            inStock: !product.inStock,
-            updatedAt: new Date().toISOString()
-          }
-        : product
-    );
+    setProducts(prevProducts => {
+      const updatedProducts = prevProducts.map(product =>
+        product._id === productId
+          ? { 
+              ...product, 
+              inStock: !product.inStock,
+              updatedAt: new Date().toISOString()
+            }
+          : product
+      );
 
-    const saveResult = safeLocalStorageSave('allProducts', updatedProducts);
-    
-    if (saveResult.success) {
-      setProducts(updatedProducts);
+      const saveResult = safeLocalStorageSave('allProducts', updatedProducts);
+      
+      if (!saveResult.success) {
+        throw new Error(saveResult.error);
+      }
+      
       window.dispatchEvent(new Event('productsUpdated'));
-    } else {
-      throw new Error(saveResult.error);
-    }
+      
+      return updatedProducts;
+    });
   };
 
   // Client: Get all products (only in stock)
@@ -218,15 +250,20 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
-  // Listen for storage changes (sync across tabs)
+  // 👈 FIXED: Listen for storage changes (sync across tabs)
   useEffect(() => {
-    const handleStorageChange = () => {
-      const savedProducts = localStorage.getItem('allProducts');
-      if (savedProducts) {
-        try {
-          setProducts(JSON.parse(savedProducts));
-        } catch (e) {
-          console.error('Error parsing products from storage:', e);
+    const handleStorageChange = (e) => {
+      // Only reload if allProducts changed
+      if (e.key === 'allProducts' || e.type === 'productsUpdated') {
+        const savedProducts = localStorage.getItem('allProducts');
+        if (savedProducts) {
+          try {
+            const parsedProducts = JSON.parse(savedProducts);
+            setProducts(parsedProducts);
+            console.log('Products reloaded from storage event:', parsedProducts.length); // Debug log
+          } catch (error) {
+            console.error('Error parsing products from storage event:', error);
+          }
         }
       }
     };
