@@ -1,13 +1,15 @@
-// MyOrders.jsx
+// MyOrders.jsx - Fixed with OrderContext
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import { useClientAuth } from '../../context/ClientAuthContext';
+import { useOrders } from '../../context/OrderContext'; // 👈 Add this
 import './MyOrders.css';
 
 const MyOrders = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useClientAuth();
+  const { getUserOrders, updateOrderStatus } = useOrders(); // 👈 Use OrderContext
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
@@ -19,14 +21,33 @@ const MyOrders = () => {
       return;
     }
 
-    // Load orders from localStorage
+    // Load orders from OrderContext
     if (user?.email) {
-      const savedOrders = localStorage.getItem(`orders_${user.email}`);
-      if (savedOrders) {
-        setOrders(JSON.parse(savedOrders));
-      }
+      loadOrders();
     }
   }, [user, isAuthenticated, navigate]);
+
+  // Listen for order updates
+  useEffect(() => {
+    const handleOrdersUpdate = () => {
+      if (user?.email) {
+        loadOrders();
+      }
+    };
+
+    window.addEventListener('ordersUpdated', handleOrdersUpdate);
+    
+    return () => {
+      window.removeEventListener('ordersUpdated', handleOrdersUpdate);
+    };
+  }, [user?.email]);
+
+  const loadOrders = () => {
+    if (user?.email) {
+      const userOrders = getUserOrders(user.email);
+      setOrders(userOrders);
+    }
+  };
 
   const getStatusColor = (status) => {
     const colors = {
@@ -77,13 +98,9 @@ const MyOrders = () => {
           </button>
           <button
             onClick={() => {
-              const updatedOrders = orders.map(order => 
-                order.orderId === orderId 
-                  ? { ...order, status: 'Cancelled' }
-                  : order
-              );
-              setOrders(updatedOrders);
-              localStorage.setItem(`orders_${user.email}`, JSON.stringify(updatedOrders));
+              // Use OrderContext to update status
+              updateOrderStatus(orderId, 'Cancelled');
+              loadOrders(); // Reload orders
               toast.dismiss(t.id);
               toast.success('Order cancelled successfully', {
                 duration: 3000,
@@ -178,7 +195,7 @@ const MyOrders = () => {
         ) : (
           <div className="orders-list">
             {filteredOrders.map((order) => (
-              <div key={order.orderId} className="order-card">
+              <div key={order._id} className="order-card">
                 <div className="order-card-header">
                   <div className="order-header-left">
                     <h3 className="order-id">Order #{order.orderId}</h3>
@@ -201,9 +218,9 @@ const MyOrders = () => {
                   <div className="order-items-preview">
                     {order.items.slice(0, 3).map((item, index) => (
                       <div key={index} className="order-item-mini">
-                        <img src={item.image[0]} alt={item.name} />
+                        <img src={item.product.image[0] || item.product.image} alt={item.product.name} />
                         <div className="item-mini-details">
-                          <p className="item-mini-name">{item.name}</p>
+                          <p className="item-mini-name">{item.product.name}</p>
                           <p className="item-mini-qty">Qty: {item.quantity}</p>
                         </div>
                       </div>
@@ -246,7 +263,7 @@ const MyOrders = () => {
                   {order.status === 'Pending' && (
                     <button 
                       className="cancel-order-btn"
-                      onClick={() => handleCancelOrder(order.orderId)}
+                      onClick={() => handleCancelOrder(order._id)}
                     >
                       Cancel Order
                     </button>
@@ -309,11 +326,7 @@ const MyOrders = () => {
                   <div className="address-box">
                     <p className="address-name">{selectedOrder.address.fullName}</p>
                     <p className="address-text">
-                      {selectedOrder.address.addressLine1}
-                      {selectedOrder.address.addressLine2 && `, ${selectedOrder.address.addressLine2}`}
-                    </p>
-                    <p className="address-text">
-                      {selectedOrder.address.city}, {selectedOrder.address.state} - {selectedOrder.address.pincode}
+                      {selectedOrder.address.fullAddress || `${selectedOrder.address.addressLine1}${selectedOrder.address.addressLine2 ? ', ' + selectedOrder.address.addressLine2 : ''}, ${selectedOrder.address.city}, ${selectedOrder.address.state} - ${selectedOrder.address.pincode}`}
                     </p>
                     <p className="address-phone">Phone: {selectedOrder.address.phone}</p>
                   </div>
@@ -325,10 +338,10 @@ const MyOrders = () => {
                   <div className="order-items-list">
                     {selectedOrder.items.map((item, index) => (
                       <div key={index} className="order-detail-item">
-                        <img src={item.image[0]} alt={item.name} className="item-image" />
+                        <img src={item.product.image[0] || item.product.image} alt={item.product.name} className="item-image" />
                         <div className="item-details">
-                          <h4>{item.name}</h4>
-                          <p className="item-category">{item.category}</p>
+                          <h4>{item.product.name}</h4>
+                          <p className="item-category">{item.product.category}</p>
                           <p className="item-quantity">Quantity: {item.quantity}</p>
                         </div>
                         <div className="item-price">

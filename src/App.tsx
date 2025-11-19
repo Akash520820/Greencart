@@ -5,6 +5,8 @@ import './App.css';
 import { ClientAuthProvider } from './context/ClientAuthContext';
 import { SellerAuthProvider } from './context/SellerAuthContext';
 import { CartProvider } from './context/CartContext';
+import { ProductProvider } from './context/ProductContext';
+import { OrderProvider } from './context/OrderContext'; // 👈 Add this
 
 // Client Layout & Pages
 import ClientAppLayout from './Client/ClientsComponent/Layout/ClientAppLayout';
@@ -92,16 +94,20 @@ const router = createBrowserRouter([
     ],
   },
 ], {
-  basename: basename, // This is important for GitHub Pages
+  basename: basename,
 });
 
 function App() {
   return (
     <ClientAuthProvider>
       <SellerAuthProvider>
-        <CartProvider>
-          <RouterProvider router={router} />
-        </CartProvider>
+        <ProductProvider>
+          <OrderProvider>  {/* 👈 Add OrderProvider */}
+            <CartProvider>
+              <RouterProvider router={router} />
+            </CartProvider>
+          </OrderProvider>
+        </ProductProvider>
       </SellerAuthProvider>
     </ClientAuthProvider>
   );

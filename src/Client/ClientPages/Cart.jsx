@@ -1,9 +1,10 @@
-// Cart.jsx - Optimized with Component Separation
+// Cart.jsx - Fixed with OrderContext
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import { useCart } from '../../context/CartContext';
 import { useClientAuth } from '../../context/ClientAuthContext';
+import { useOrders } from '../../context/OrderContext'; // 👈 Add this
 
 // Separated Components
 import CartHeader from '../ClientsComponent/Cart/CartHeader';
@@ -22,6 +23,7 @@ const Cart = () => {
   const navigate = useNavigate();
   const { cartItems, updateQuantity, removeFromCart, getTotalPrice, clearCart } = useCart();
   const { isAuthenticated, user } = useClientAuth();
+  const { createOrder } = useOrders(); // 👈 Add this
   
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -38,7 +40,7 @@ const Cart = () => {
     pincode: ''
   });
 
-  // Load addresses on mount - Memoized
+  // Load addresses on mount
   useEffect(() => {
     if (user?.email) {
       const saved = localStorage.getItem(`addresses_${user.email}`);
@@ -50,7 +52,7 @@ const Cart = () => {
         }
       }
     }
-  }, [user?.email]); // Only depend on email
+  }, [user?.email]);
 
   // Auth check
   useEffect(() => {
@@ -67,7 +69,6 @@ const Cart = () => {
     return { subtotal, tax, total };
   }, [getTotalPrice]);
 
-  // Memoized handlers
   const handleCloseModal = useCallback(() => {
     setShowAuthModal(false);
     if (!isAuthenticated) {
@@ -207,15 +208,20 @@ const Cart = () => {
     const tax = subtotal * 0.02;
     const total = subtotal + platformFee + handlingFee + tax;
 
-    const order = {
-      orderId: `ORD${Date.now()}`,
+    // 👇 Create order using OrderContext
+    const orderData = {
       userId: user?.email,
       userName: user?.name || user?.email,
+      userEmail: user?.email,
       items: cartItems.map(item => ({
-        ...item,
+        product: item, // Full product object
+        quantity: item.quantity,
         priceAtOrder: item.offerPrice || item.price
       })),
-      address: selectedAddress,
+      address: {
+        ...selectedAddress,
+        fullAddress: `${selectedAddress.addressLine1}, ${selectedAddress.addressLine2 ? selectedAddress.addressLine2 + ', ' : ''}${selectedAddress.city}, ${selectedAddress.state} - ${selectedAddress.pincode}`
+      },
       paymentMethod: paymentDetails.method,
       paymentDetails: paymentDetails.details,
       subtotal: parseFloat(subtotal.toFixed(2)),
@@ -223,16 +229,11 @@ const Cart = () => {
       platformFee,
       handlingFee,
       shipping: 0,
-      total: parseFloat(total.toFixed(2)),
-      status: 'Pending',
-      orderDate: new Date().toISOString(),
-      estimatedDelivery: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+      total: parseFloat(total.toFixed(2))
     };
 
-    // Save order
-    const existingOrders = JSON.parse(localStorage.getItem(`orders_${user?.email}`) || '[]');
-    existingOrders.unshift(order);
-    localStorage.setItem(`orders_${user?.email}`, JSON.stringify(existingOrders));
+    // Create order using context
+    const createdOrder = createOrder(orderData);
 
     // Clear cart
     clearCart();
@@ -259,7 +260,7 @@ const Cart = () => {
     setTimeout(() => {
       navigate('/my-orders');
     }, 1000);
-  }, [cartItems, selectedAddress, user, getTotalPrice, clearCart, navigate]);
+  }, [cartItems, selectedAddress, user, getTotalPrice, clearCart, navigate, createOrder]);
 
   // Early returns
   if (!isAuthenticated) {

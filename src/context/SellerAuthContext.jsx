@@ -2,6 +2,17 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 
 const SellerAuthContext = createContext();
 
+// HARDCODED SELLER CREDENTIALS - Your company's single seller account
+const HARDCODED_SELLER = {
+  email: 'seller@yourcompany.com',
+  password: 'Seller@123',  // Change this to your desired password
+  id: 'seller_001',
+  name: 'Company Admin',
+  role: 'seller',
+  shopName: 'Your Company Store',
+  phone: '+1 234 567 8900'
+};
+
 export const SellerAuthProvider = ({ children }) => {
   const [isSellerAuthenticated, setIsSellerAuthenticated] = useState(false);
   const [seller, setSeller] = useState(null);
@@ -13,86 +24,63 @@ export const SellerAuthProvider = ({ children }) => {
     const savedToken = localStorage.getItem('sellerToken');
     
     if (savedSeller && savedToken) {
-      setSeller(JSON.parse(savedSeller));
-      setIsSellerAuthenticated(true);
+      const parsedSeller = JSON.parse(savedSeller);
+      // Verify it's the correct seller
+      if (parsedSeller.id === HARDCODED_SELLER.id) {
+        setSeller(parsedSeller);
+        setIsSellerAuthenticated(true);
+      } else {
+        // Invalid seller, clear storage
+        localStorage.removeItem('seller');
+        localStorage.removeItem('sellerToken');
+      }
     }
     setLoading(false);
   }, []);
 
-  // Seller Login
+  // Seller Login with hardcoded credentials
   const sellerLogin = async (email, password) => {
     try {
-      // TODO: Replace with your actual API call
-      // const response = await fetch('/api/seller/login', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ email, password })
-      // });
-      // const data = await response.json();
+      // Validate against hardcoded credentials
+      if (email === HARDCODED_SELLER.email && password === HARDCODED_SELLER.password) {
+        const sellerData = {
+          id: HARDCODED_SELLER.id,
+          name: HARDCODED_SELLER.name,
+          email: HARDCODED_SELLER.email,
+          role: HARDCODED_SELLER.role,
+          shopName: HARDCODED_SELLER.shopName,
+          phone: HARDCODED_SELLER.phone
+        };
 
-      // TEMPORARY: Mock seller data for testing
-      const mockSeller = {
-        id: '123',
-        name: 'Seller Name',
-        email: email,
-        role: 'seller',
-        shopName: 'My Shop',
-        phone: '+91 1234567890'
-      };
+        const token = `seller_token_${Date.now()}`;
 
-      const mockToken = 'mock-seller-token-12345';
+        // Save to state
+        setSeller(sellerData);
+        setIsSellerAuthenticated(true);
 
-      // Save to state
-      setSeller(mockSeller);
-      setIsSellerAuthenticated(true);
+        // Save to localStorage
+        localStorage.setItem('seller', JSON.stringify(sellerData));
+        localStorage.setItem('sellerToken', token);
 
-      // Save to localStorage
-      localStorage.setItem('seller', JSON.stringify(mockSeller));
-      localStorage.setItem('sellerToken', mockToken);
-
-      return { success: true, seller: mockSeller };
+        return { success: true, seller: sellerData };
+      } else {
+        return { 
+          success: false, 
+          error: 'Invalid credentials. Please check your email and password.' 
+        };
+      }
     } catch (error) {
       console.error('Seller login error:', error);
-      return { success: false, error: 'Login failed' };
+      return { success: false, error: 'Login failed. Please try again.' };
     }
   };
 
-  // Seller Signup
-  const sellerSignup = async (name, email, password, shopName, phone) => {
-    try {
-      // TODO: Replace with your actual API call
-      // const response = await fetch('/api/seller/signup', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ name, email, password, shopName, phone })
-      // });
-      // const data = await response.json();
-
-      // TEMPORARY: Mock seller data for testing
-      const mockSeller = {
-        id: '123',
-        name: name,
-        email: email,
-        role: 'seller',
-        shopName: shopName,
-        phone: phone
-      };
-
-      const mockToken = 'mock-seller-token-12345';
-
-      // Save to state
-      setSeller(mockSeller);
-      setIsSellerAuthenticated(true);
-
-      // Save to localStorage
-      localStorage.setItem('seller', JSON.stringify(mockSeller));
-      localStorage.setItem('sellerToken', mockToken);
-
-      return { success: true, seller: mockSeller };
-    } catch (error) {
-      console.error('Seller signup error:', error);
-      return { success: false, error: 'Signup failed' };
-    }
+  // Seller Signup - Disabled (only one seller account allowed)
+  const sellerSignup = async () => {
+    return { 
+      success: false, 
+      error: 'Signup is disabled. Please contact the administrator for access.' 
+    };
   };
 
   // Seller Logout
@@ -105,7 +93,13 @@ export const SellerAuthProvider = ({ children }) => {
 
   // Update Seller Profile
   const updateSellerProfile = (updatedData) => {
-    const updatedSeller = { ...seller, ...updatedData };
+    // Only allow updating certain fields, not credentials
+    const updatedSeller = { 
+      ...seller, 
+      name: updatedData.name || seller.name,
+      shopName: updatedData.shopName || seller.shopName,
+      phone: updatedData.phone || seller.phone
+    };
     setSeller(updatedSeller);
     localStorage.setItem('seller', JSON.stringify(updatedSeller));
   };
@@ -117,7 +111,11 @@ export const SellerAuthProvider = ({ children }) => {
     sellerLogin,
     sellerSignup,
     sellerLogout,
-    updateSellerProfile
+    updateSellerProfile,
+    HARDCODED_CREDENTIALS: { 
+      email: HARDCODED_SELLER.email,
+      // Don't expose password in production
+    }
   };
 
   return (

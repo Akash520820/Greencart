@@ -1,0 +1,302 @@
+/* ========================================
+   MANAGE INVENTORY PAGE
+======================================== */
+.manage-inventory-page {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.inventory-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.inventory-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+}
+
+.inventory-subtitle {
+  font-size: 1rem;
+  color: #718096;
+  margin: 0;
+}
+
+/* ========================================
+   FILTERS
+======================================== */
+.inventory-filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.search-input,
+.category-select {
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.search-input {
+  flex: 1;
+  max-width: 400px;
+}
+
+.search-input:focus,
+.category-select:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+.category-select {
+  min-width: 150px;
+  cursor: pointer;
+}
+
+/* ========================================
+   TABLE
+======================================== */
+.inventory-table-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.inventory-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-header {
+  background: #f7fafc;
+  padding: 1.25rem 1.5rem;
+  text-align: left;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #2d3748;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.table-row {
+  border-bottom: 1px solid #e2e8f0;
+  transition: background 0.2s ease;
+}
+
+.table-row:hover {
+  background: #f7fafc;
+}
+
+.table-cell {
+  padding: 1.25rem 1.5rem;
+  color: #4a5568;
+  font-size: 0.95rem;
+}
+
+/* Product Info */
+.product-cell {
+  width: 45%;
+}
+
+.product-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.product-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #f7fafc;
+}
+
+.product-name {
+  font-weight: 500;
+  color: #2d3748;
+}
+
+.price-cell {
+  font-weight: 600;
+  color: #4CAF50;
+}
+
+/* ========================================
+   TOGGLE SWITCH
+======================================== */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 28px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cbd5e0;
+  transition: 0.3s;
+  border-radius: 28px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background-color: #2196F3;
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+  transform: translateX(24px);
+}
+
+/* ========================================
+   LOADING & EMPTY STATES
+======================================== */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 1rem;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e2e8f0;
+  border-top: 4px solid #4CAF50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.no-products-cell {
+  padding: 4rem 2rem !important;
+  text-align: center;
+}
+
+.no-products-message {
+  color: #718096;
+}
+
+.no-products-message i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #cbd5e0;
+  display: block;
+}
+
+.no-products-message p {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* ========================================
+   RESPONSIVE STYLES
+======================================== */
+
+/* Tablet (max-width: 991px) */
+@media (max-width: 991px) {
+  .inventory-filters {
+    flex-direction: column;
+  }
+
+  .search-input {
+    max-width: 100%;
+  }
+
+  .category-select {
+    width: 100%;
+  }
+}
+
+/* Mobile (max-width: 767px) */
+@media (max-width: 767px) {
+  .inventory-title {
+    font-size: 1.5rem;
+  }
+
+  .inventory-table-container {
+    overflow-x: auto;
+  }
+
+  .inventory-table {
+    min-width: 600px;
+  }
+
+  .table-header,
+  .table-cell {
+    padding: 1rem;
+    font-size: 0.875rem;
+  }
+
+  .product-image {
+    width: 50px;
+    height: 50px;
+  }
+
+  .product-name {
+    font-size: 0.9rem;
+  }
+}
+
+/* Small Mobile (max-width: 480px) */
+@media (max-width: 480px) {
+  .manage-inventory-page {
+    padding: 0;
+  }
+
+  .inventory-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .inventory-title {
+    font-size: 1.35rem;
+  }
+
+  .inventory-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .table-header,
+  .table-cell {
+    padding: 0.875rem;
+  }
+}

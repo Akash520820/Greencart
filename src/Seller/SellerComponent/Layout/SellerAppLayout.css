@@ -1,10 +1,14 @@
 /* ========================================
-   SELLER LAYOUT WRAPPER
+   REMOVE GLOBAL BODY PADDING FOR SELLER LAYOUT
 ======================================== */
 body:has(.seller-layout-wrapper) {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
 }
+
+/* ========================================
+   SELLER LAYOUT WRAPPER
+======================================== */
 .seller-layout-wrapper {
   display: flex;
   min-height: 100vh;
@@ -12,12 +16,15 @@ body:has(.seller-layout-wrapper) {
 }
 
 /* ========================================
-   SELLER LAYOUT CONTENT
+   SELLER LAYOUT CONTENT - WITH LEFT MARGIN FOR FIXED SIDEBAR
 ======================================== */
 .seller-layout-content {
   flex: 1;
+  margin-left: 280px; /* Width of sidebar */
   padding: 2rem;
   overflow-x: hidden;
+  overflow-y: auto;
+  min-height: 100vh;
   transition: margin 0.3s ease;
 }
 
@@ -25,7 +32,7 @@ body:has(.seller-layout-wrapper) {
    RESPONSIVE STYLES
 ======================================== */
 
-/* Mobile (< 992px) */
+/* Mobile (< 992px) - Remove margin since sidebar is hidden */
 @media (max-width: 991.98px) {
   .seller-layout-content {
     margin-left: 0;
@@ -41,10 +48,10 @@ body:has(.seller-layout-wrapper) {
   }
 }
 
-/* Desktop (>= 992px) */
+/* Desktop (>= 992px) - Content scrolls, sidebar stays fixed */
 @media (min-width: 992px) {
   .seller-layout-content {
-    margin-left: 0;
+    margin-left: 280px;
     padding: 2.5rem;
   }
 }

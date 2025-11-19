@@ -1,19 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { dummyProducts } from '../../assets/assets';
+import { useProducts } from '../../context/ProductContext'; // 👈 Use ProductContext
 import ProductCard from '../ClientsComponent/ProductCard';
 import AuthModal from '../ClientsComponent/LogInSignIn/AuthModal';
 import './AllProduct.css';
 
 const AllProduct = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { getAvailableProducts, getAllCategories } = useProducts(); // 👈 Get from context
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [filteredProducts, setFilteredProducts] = useState(dummyProducts);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [pendingProduct, setPendingProduct] = useState(null);
 
-  // Get all unique categories
-  const allCategories = ['All', ...new Set(dummyProducts.map(product => product.category))];
+  // Get all unique categories from ProductContext
+  const allCategories = getAllCategories();
+
+  useEffect(() => {
+    // Load products from context
+    loadProducts();
+  }, []);
+
+  useEffect(() => {
+    // Listen for product updates
+    const handleProductsUpdate = () => {
+      loadProducts();
+    };
+
+    window.addEventListener('productsUpdated', handleProductsUpdate);
+    
+    return () => {
+      window.removeEventListener('productsUpdated', handleProductsUpdate);
+    };
+  }, [selectedCategory]);
 
   useEffect(() => {
     // Get category from URL parameter
@@ -24,15 +43,22 @@ const AllProduct = () => {
       filterProducts(categoryFromUrl);
     } else {
       setSelectedCategory('All');
-      setFilteredProducts(dummyProducts);
+      loadProducts();
     }
   }, [searchParams]);
 
+  const loadProducts = () => {
+    const availableProducts = getAvailableProducts();
+    setFilteredProducts(availableProducts);
+  };
+
   const filterProducts = (category) => {
+    const availableProducts = getAvailableProducts();
+    
     if (category === 'All') {
-      setFilteredProducts(dummyProducts);
+      setFilteredProducts(availableProducts);
     } else {
-      const filtered = dummyProducts.filter(product => product.category === category);
+      const filtered = availableProducts.filter(product => product.category === category);
       setFilteredProducts(filtered);
     }
   };
@@ -42,7 +68,7 @@ const AllProduct = () => {
     
     if (category === 'All') {
       setSearchParams({});
-      setFilteredProducts(dummyProducts);
+      loadProducts();
     } else {
       setSearchParams({ category });
       filterProducts(category);
@@ -56,7 +82,6 @@ const AllProduct = () => {
 
   const handleCloseModal = () => {
     setShowAuthModal(false);
-    // Don't clear pending product immediately - let AuthModal handle it
   };
 
   return (
