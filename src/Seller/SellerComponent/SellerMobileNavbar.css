@@ -31,6 +31,9 @@
   transition: all 0.3s ease;
   border-radius: 8px;
   min-width: 60px;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 .seller-mobile-nav-item:hover {
@@ -94,35 +97,128 @@
 }
 
 /* ========================================
-   ADD BUTTON (SPECIAL CENTER BUTTON)
+   ACCOUNT DROPDOWN MENU
 ======================================== */
-.seller-mobile-nav-add {
-  position: relative;
-  margin: 0 0.5rem;
+.seller-mobile-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1999;
+  animation: fadeIn 0.3s ease;
 }
 
-.seller-mobile-nav-icon-add {
-  width: 56px;
-  height: 56px;
-  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.seller-mobile-account-menu {
+  position: fixed;
+  bottom: 70px;
+  right: 10px;
+  background: #2c3e50;
+  border-radius: 12px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  z-index: 2000;
+  min-width: 280px;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Account Header */
+.seller-account-header {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.seller-account-avatar {
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
+  background: linear-gradient(135deg, #4CAF50, #2E7D32);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 1.8rem;
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
-  transition: all 0.3s ease;
-  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  flex-shrink: 0;
 }
 
-.seller-mobile-nav-add:hover .seller-mobile-nav-icon-add {
-  transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.5);
+.seller-account-info {
+  flex: 1;
+  overflow: hidden;
 }
 
-.seller-mobile-nav-add:active .seller-mobile-nav-icon-add {
-  transform: scale(0.95);
+.seller-account-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.seller-account-email {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Divider */
+.seller-account-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 0 10px;
+}
+
+/* Menu Item */
+.seller-account-menu-item {
+  width: 100%;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.seller-account-menu-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+}
+
+.seller-account-menu-item:active {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.seller-account-menu-icon {
+  font-size: 1.3rem;
+  color: #e74c3c;
 }
 
 /* ========================================
@@ -155,10 +251,9 @@
     font-size: 0.65rem;
   }
 
-  .seller-mobile-nav-icon-add {
-    width: 52px;
-    height: 52px;
-    font-size: 1.7rem;
+  .seller-mobile-account-menu {
+    bottom: 65px;
+    min-width: 260px;
   }
 }
 
@@ -191,18 +286,41 @@
     height: 16px;
   }
 
-  .seller-mobile-nav-icon-add {
-    width: 48px;
-    height: 48px;
-    font-size: 1.6rem;
-    margin-bottom: 0.75rem;
+  .seller-mobile-account-menu {
+    bottom: 60px;
+    right: 5px;
+    min-width: 240px;
+  }
+
+  .seller-account-header {
+    padding: 15px;
+  }
+
+  .seller-account-avatar {
+    width: 45px;
+    height: 45px;
+    font-size: 1.3rem;
+  }
+
+  .seller-account-name {
+    font-size: 0.95rem;
+  }
+
+  .seller-account-email {
+    font-size: 0.8rem;
+  }
+
+  .seller-account-menu-item {
+    padding: 12px 15px;
+    font-size: 0.9rem;
   }
 }
 
 /* ========================================
    ACCESSIBILITY
 ======================================== */
-.seller-mobile-nav-item:focus {
+.seller-mobile-nav-item:focus,
+.seller-account-menu-item:focus {
   outline: 2px solid #4CAF50;
   outline-offset: 2px;
 }
@@ -210,17 +328,11 @@
 /* Reduced motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
   .seller-mobile-nav-item,
-  .seller-mobile-nav-icon-add {
+  .seller-mobile-overlay,
+  .seller-mobile-account-menu {
+    animation: none;
     transition: none;
   }
-}
-
-/* ========================================
-   DARK THEME VARIANT (OPTIONAL)
-======================================== */
-.seller-mobile-navbar.dark-theme {
-  background: #1a1a1a;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* ========================================
@@ -230,5 +342,9 @@
   .seller-mobile-navbar {
     padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
     height: calc(70px + env(safe-area-inset-bottom));
+  }
+
+  .seller-mobile-account-menu {
+    bottom: calc(70px + env(safe-area-inset-bottom));
   }
 }

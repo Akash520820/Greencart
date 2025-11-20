@@ -3,6 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import { useSellerAuth } from '../../context/SellerAuthContext';
 import { useProducts } from '../../context/ProductContext';
 import { useOrders } from '../../context/OrderContext';
+import { 
+  FiPackage, 
+  FiShoppingCart, 
+  FiClock, 
+  FiDollarSign,
+  FiPlusCircle,
+  FiClipboard,
+  FiBox,
+  FiArrowRight,
+  FiAlertTriangle,
+  FiInfo,
+  FiTrendingUp
+} from 'react-icons/fi';
 import './SellerDashboard.css';
 
 const SellerDashboard = () => {
@@ -108,7 +121,7 @@ const SellerDashboard = () => {
       <div className="stats-grid">
         <div className="stat-card stat-card-primary">
           <div className="stat-icon">
-            <i className="bi bi-box-seam"></i>
+            <FiPackage />
           </div>
           <div className="stat-content">
             <h3 className="stat-value">{stats.totalProducts}</h3>
@@ -118,13 +131,13 @@ const SellerDashboard = () => {
             className="stat-action"
             onClick={() => navigate('/seller/inventory')}
           >
-            View All <i className="bi bi-arrow-right"></i>
+            View All <FiArrowRight />
           </button>
         </div>
 
         <div className="stat-card stat-card-success">
           <div className="stat-icon">
-            <i className="bi bi-cart-check"></i>
+            <FiShoppingCart />
           </div>
           <div className="stat-content">
             <h3 className="stat-value">{stats.totalOrders}</h3>
@@ -134,13 +147,13 @@ const SellerDashboard = () => {
             className="stat-action"
             onClick={() => navigate('/seller/orders')}
           >
-            View All <i className="bi bi-arrow-right"></i>
+            View All <FiArrowRight />
           </button>
         </div>
 
         <div className="stat-card stat-card-warning">
           <div className="stat-icon">
-            <i className="bi bi-clock-history"></i>
+            <FiClock />
           </div>
           <div className="stat-content">
             <h3 className="stat-value">{stats.pendingOrders}</h3>
@@ -150,20 +163,20 @@ const SellerDashboard = () => {
             className="stat-action"
             onClick={() => navigate('/seller/orders')}
           >
-            View All <i className="bi bi-arrow-right"></i>
+            View All <FiArrowRight />
           </button>
         </div>
 
         <div className="stat-card stat-card-info">
           <div className="stat-icon">
-            <i className="bi bi-currency-dollar"></i>
+            <FiDollarSign />
           </div>
           <div className="stat-content">
             <h3 className="stat-value">${stats.totalRevenue.toLocaleString()}</h3>
             <p className="stat-label">Total Revenue</p>
           </div>
           <div className="stat-trend">
-            <i className="bi bi-graph-up-arrow"></i>
+            <FiTrendingUp />
             <span>From {stats.totalOrders} orders</span>
           </div>
         </div>
@@ -178,10 +191,12 @@ const SellerDashboard = () => {
             onClick={() => navigate('/seller/add-product')}
           >
             <div className="quick-action-icon">
-              <i className="bi bi-plus-circle"></i>
+              <FiPlusCircle />
             </div>
-            <h3 className="quick-action-title">Add Product</h3>
-            <p className="quick-action-desc">Add new products to your inventory</p>
+            <div>
+              <h3 className="quick-action-title">Add Product</h3>
+              <p className="quick-action-desc">Add new products to your inventory</p>
+            </div>
           </button>
 
           <button 
@@ -189,10 +204,12 @@ const SellerDashboard = () => {
             onClick={() => navigate('/seller/inventory')}
           >
             <div className="quick-action-icon">
-              <i className="bi bi-clipboard-data"></i>
+              <FiClipboard />
             </div>
-            <h3 className="quick-action-title">Manage Inventory</h3>
-            <p className="quick-action-desc">Update stock and product details</p>
+            <div>
+              <h3 className="quick-action-title">Manage Inventory</h3>
+              <p className="quick-action-desc">Update stock and product details</p>
+            </div>
           </button>
 
           <button 
@@ -200,10 +217,12 @@ const SellerDashboard = () => {
             onClick={() => navigate('/seller/orders')}
           >
             <div className="quick-action-icon">
-              <i className="bi bi-box-seam"></i>
+              <FiBox />
             </div>
-            <h3 className="quick-action-title">View Orders</h3>
-            <p className="quick-action-desc">Process and manage customer orders</p>
+            <div>
+              <h3 className="quick-action-title">View Orders</h3>
+              <p className="quick-action-desc">Process and manage customer orders</p>
+            </div>
           </button>
         </div>
       </div>
@@ -217,10 +236,11 @@ const SellerDashboard = () => {
               className="view-all-btn"
               onClick={() => navigate('/seller/orders')}
             >
-              View All <i className="bi bi-arrow-right"></i>
+              View All <FiArrowRight />
             </button>
           </div>
 
+          {/* Desktop Table View */}
           <div className="orders-table-container">
             <table className="orders-table">
               <thead>
@@ -249,13 +269,40 @@ const SellerDashboard = () => {
               </tbody>
             </table>
           </div>
+
+          {/* Mobile Card View */}
+          <div className="mobile-orders-list">
+            {recentOrders.map(order => (
+              <div key={order._id} className="mobile-order-card">
+                <div className="mobile-order-header">
+                  <div>
+                    <h3 className="mobile-order-customer">{order.customerName}</h3>
+                    <p className="mobile-order-date">{order.date}</p>
+                  </div>
+                  <span className={`status-badge status-${order.status.toLowerCase()}`}>
+                    {order.status}
+                  </span>
+                </div>
+                <div className="mobile-order-body">
+                  <div className="mobile-order-row">
+                    <span className="mobile-order-label">Product</span>
+                    <span className="mobile-order-value">{order.productName}</span>
+                  </div>
+                  <div className="mobile-order-row">
+                    <span className="mobile-order-label">Amount</span>
+                    <span className="mobile-order-amount">${order.amount.toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
       {/* Alert if products are out of stock */}
       {stats.outOfStock > 0 && (
         <div className="alert-banner">
-          <i className="bi bi-exclamation-triangle"></i>
+          <FiAlertTriangle />
           <span>
             {stats.outOfStock} product{stats.outOfStock > 1 ? 's are' : ' is'} out of stock.
           </span>
@@ -271,7 +318,7 @@ const SellerDashboard = () => {
       {/* No orders message */}
       {recentOrders.length === 0 && (
         <div className="alert-banner" style={{ background: 'linear-gradient(135deg, #e3f2fd, #bbdefb)', borderColor: '#2196F3' }}>
-          <i className="bi bi-info-circle" style={{ color: '#1976d2' }}></i>
+          <FiInfo style={{ color: '#1976d2' }} />
           <span style={{ color: '#0d47a1' }}>
             No orders yet. Start by adding products to your inventory!
           </span>

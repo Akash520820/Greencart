@@ -46,8 +46,8 @@ const ProductDetails = () => {
 
   if (!product) {
     return (
-      <div className="product-details-loading">
-        <div className="spinner"></div>
+      <div className="pd-loading">
+        <div className="pd-spinner"></div>
         <p>Loading product...</p>
       </div>
     );
@@ -114,28 +114,28 @@ const ProductDetails = () => {
   return (
     <>
       <Toaster />
-      <div className="product-details-page">
+      <div className="pd-page">
         <div className="container">
           
 
           {/* Product Details Section */}
-          <div className="product-details-container">
+          <div className="pd-container">
             {/* Image Gallery */}
-            <div className="product-gallery">
-              <div className="main-image">
+            <div className="pd-gallery">
+              <div className="pd-main-image">
                 <img 
                   src={product.image[selectedImage]} 
                   alt={product.name}
                 />
                 {discountPercentage > 0 && (
-                  <span className="discount-badge">{discountPercentage}% OFF</span>
+                  <span className="pd-discount-badge">{discountPercentage}% OFF</span>
                 )}
               </div>
-              <div className="thumbnail-images">
+              <div className="pd-thumbnail-images">
                 {product.image.map((img, index) => (
                   <div 
                     key={index}
-                    className={`thumbnail ${selectedImage === index ? 'active' : ''}`}
+                    className={`pd-thumbnail ${selectedImage === index ? 'active' : ''}`}
                     onClick={() => setSelectedImage(index)}
                   >
                     <img src={img} alt={`${product.name} ${index + 1}`} />
@@ -145,12 +145,12 @@ const ProductDetails = () => {
             </div>
 
             {/* Product Info */}
-            <div className="product-info">
-              <div className="product-category">{product.category}</div>
-              <h1 className="product-name">{product.name}</h1>
+            <div className="pd-info">
+              <div className="pd-category">{product.category}</div>
+              <h1 className="pd-name">{product.name}</h1>
               
               {/* Rating */}
-              <div className="product-rating">
+              <div className="pd-rating">
                 {[...Array(4)].map((_, index) => (
                   <svg key={index} width="20" height="20" viewBox="0 0 24 24" fill="#48bb78">
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
@@ -159,25 +159,25 @@ const ProductDetails = () => {
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="#e2e8f0">
                   <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                 </svg>
-                <span className="rating-count">(4.0) · 124 Reviews</span>
+                <span className="pd-rating-count">(4.0) · 124 Reviews</span>
               </div>
 
               {/* Price */}
-              <div className="product-price-section">
-                <div className="price-row">
-                  <span className="current-price">₹{currentPrice}</span>
+              <div className="pd-price-section">
+                <div className="pd-price-row">
+                  <span className="pd-current-price">₹{currentPrice}</span>
                   {product.offerPrice && (
                     <>
-                      <span className="original-price">₹{product.price}</span>
-                      <span className="save-amount">Save ₹{product.price - product.offerPrice}</span>
+                      <span className="pd-original-price">₹{product.price}</span>
+                      <span className="pd-save-amount">Save ₹{product.price - product.offerPrice}</span>
                     </>
                   )}
                 </div>
-                <p className="tax-info">Inclusive of all taxes</p>
+                <p className="pd-tax-info">Inclusive of all taxes</p>
               </div>
 
               {/* Stock Status */}
-              <div className="stock-status">
+              <div className="pd-stock-status">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#48bb78" strokeWidth="2">
                   <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                   <polyline points="22 4 12 14.01 9 11.01"/>
@@ -186,9 +186,9 @@ const ProductDetails = () => {
               </div>
 
               {/* Quantity Selector */}
-              <div className="quantity-section">
+              <div className="pd-quantity-section">
                 <label>Quantity:</label>
-                <div className="quantity-controls">
+                <div className="pd-quantity-controls">
                   <button 
                     onClick={() => handleQuantityChange(-1)}
                     disabled={quantity <= 1}
@@ -197,7 +197,7 @@ const ProductDetails = () => {
                       <line x1="5" y1="12" x2="19" y2="12"/>
                     </svg>
                   </button>
-                  <span className="quantity-value">{quantity}</span>
+                  <span className="pd-quantity-value">{quantity}</span>
                   <button 
                     onClick={() => handleQuantityChange(1)}
                     disabled={quantity >= 10}
@@ -211,9 +211,9 @@ const ProductDetails = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="product-actions">
+              <div className="pd-actions">
                 <button 
-                  className={`add-to-cart-btn ${isInCart ? 'in-cart' : ''}`}
+                  className={`pd-add-to-cart-btn ${isInCart ? 'in-cart' : ''}`}
                   onClick={handleAddToCart}
                 >
                   {isInCart ? (
@@ -234,28 +234,28 @@ const ProductDetails = () => {
                     </>
                   )}
                 </button>
-                <button className="buy-now-btn" onClick={handleBuyNow}>
+                <button className="pd-buy-now-btn" onClick={handleBuyNow}>
                   Buy Now
                 </button>
               </div>
 
               {/* Features */}
-              <div className="product-features">
-                <div className="feature-item">
+              <div className="pd-features">
+                <div className="pd-feature-item">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#48bb78" strokeWidth="2">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                     <circle cx="12" cy="7" r="4"/>
                   </svg>
                   <span>100% Authentic</span>
                 </div>
-                <div className="feature-item">
+                <div className="pd-feature-item">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#48bb78" strokeWidth="2">
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                     <circle cx="12" cy="10" r="3"/>
                   </svg>
                   <span>Fast Delivery</span>
                 </div>
-                <div className="feature-item">
+                <div className="pd-feature-item">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#48bb78" strokeWidth="2">
                     <polyline points="20 6 9 17 4 12"/>
                   </svg>
@@ -266,9 +266,9 @@ const ProductDetails = () => {
           </div>
 
           {/* Product Description */}
-          <div className="product-description-section">
+          <div className="pd-description-section">
             <h2>Product Description</h2>
-            <div className="description-content">
+            <div className="pd-description-content">
               {product.description && product.description.length > 0 ? (
                 <ul>
                   {product.description.map((desc, index) => (
@@ -283,9 +283,9 @@ const ProductDetails = () => {
 
           {/* Related Products */}
           {relatedProducts.length > 0 && (
-            <div className="related-products-section">
+            <div className="pd-related-section">
               <h2>Related Products</h2>
-              <div className="related-products-grid">
+              <div className="pd-related-grid">
                 {relatedProducts.map((relatedProduct) => {
                   const relatedDiscount = relatedProduct.offerPrice 
                     ? Math.round(((relatedProduct.price - relatedProduct.offerPrice) / relatedProduct.price) * 100)
@@ -294,22 +294,22 @@ const ProductDetails = () => {
                   return (
                     <div 
                       key={relatedProduct._id} 
-                      className="related-product-card"
+                      className="pd-related-card"
                       onClick={() => handleRelatedProductClick(relatedProduct._id)}
                     >
-                      <div className="related-product-image">
+                      <div className="pd-related-image">
                         <img src={relatedProduct.image[0]} alt={relatedProduct.name} />
                         {relatedDiscount > 0 && (
-                          <span className="related-discount-badge">{relatedDiscount}% OFF</span>
+                          <span className="pd-related-discount-badge">{relatedDiscount}% OFF</span>
                         )}
                       </div>
-                      <div className="related-product-info">
-                        <p className="related-product-category">{relatedProduct.category}</p>
-                        <h3 className="related-product-name">{relatedProduct.name}</h3>
-                        <div className="related-product-price">
-                          <span className="related-current-price">₹{relatedProduct.offerPrice || relatedProduct.price}</span>
+                      <div className="pd-related-info">
+                        <p className="pd-related-category">{relatedProduct.category}</p>
+                        <h3 className="pd-related-name">{relatedProduct.name}</h3>
+                        <div className="pd-related-price">
+                          <span className="pd-related-current-price">₹{relatedProduct.offerPrice || relatedProduct.price}</span>
                           {relatedProduct.offerPrice && (
-                            <span className="related-original-price">₹{relatedProduct.price}</span>
+                            <span className="pd-related-original-price">₹{relatedProduct.price}</span>
                           )}
                         </div>
                       </div>
