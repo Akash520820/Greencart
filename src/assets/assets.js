@@ -361,7 +361,7 @@ export const dummyProducts = [
     name: "Carrot 500g",
     category: "Vegetables",
     price: 30,
-    offerPrice: 28,
+    offerPrice: 22,
     image: [carrot_image],
     description: [
       "Sweet and crunchy",
@@ -376,8 +376,8 @@ export const dummyProducts = [
     _id: "gd49g56h",
     name: "Spinach 500g",
     category: "Vegetables",
-    price: 18,
-    offerPrice: 15,
+    price: 28,
+    offerPrice: 19,
     image: [spinach_image_1],
     description: [
       "Rich in iron",
@@ -429,7 +429,7 @@ export const dummyProducts = [
     name: "Orange 1 kg",
     category: "Fruits",
     price: 80,
-    offerPrice: 75,
+    offerPrice: 65,
     image: [orange_image],
     description: [
       "Juicy and sweet",
@@ -462,7 +462,7 @@ export const dummyProducts = [
     category: "Fruits",
 
     price: 150,
-    offerPrice: 140,
+    offerPrice: 120,
     image: [mango_image_1],
     description: [
       "Sweet and flavorful",
@@ -478,7 +478,7 @@ export const dummyProducts = [
     name: "Grapes 500g",
     category: "Fruits",
     price: 70,
-    offerPrice: 65,
+    offerPrice: 55,
     image: [grapes_image_1],
     description: [
       "Fresh and juicy",

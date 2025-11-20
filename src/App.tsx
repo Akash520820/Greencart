@@ -1,4 +1,4 @@
-// App.tsx - Updated with Product Details Route
+// App.tsx - Updated with Flash Sale Route
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import './App.css';
 
@@ -13,7 +13,8 @@ import { OrderProvider } from './context/OrderContext';
 import ClientAppLayout from './Client/ClientsComponent/Layout/ClientAppLayout';
 import Home from './Client/ClientPages/Home';
 import AllProduct from './Client/ClientPages/AllProducts';
-import ProductDetails from './Client/ClientPages/ProductDetails'; // 👈 Add this
+import FlashSale from './Client/ClientPages/FlashSale';
+import ProductDetails from './Client/ClientPages/ProductDetails';
 import MyOrders from './Client/ClientPages/MyOrders';
 import Cart from './Client/ClientPages/Cart';
 
@@ -29,6 +30,7 @@ import SellerAuthPage from './Seller/SellerPages/SellerAuthPage';
 
 // Protected Route Component for Seller
 import ProtectedSellerRoute from './Seller/SellerComponent/ProtectedSellerRoute';
+
 
 // Get base URL for GitHub Pages
 const basename = import.meta.env.BASE_URL;
@@ -48,7 +50,11 @@ const router = createBrowserRouter([
         element: <AllProduct />,
       },
       {
-        path: "/product/:productId", // 👈 Add Product Details Route
+        path: "/flash-sale", // 👈 Add Flash Sale Route
+        element: <FlashSale />,
+      },
+      {
+        path: "/product/:productId",
         element: <ProductDetails />,
       },
       {

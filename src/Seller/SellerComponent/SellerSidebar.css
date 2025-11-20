@@ -4,8 +4,8 @@
 .sidebar-container {
   width: 280px;
   height: 100vh;
-  background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
-  color: white;
+  background: #ffffff;
+  color: #000000;
   display: flex;
   flex-direction: column;
   box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
@@ -22,8 +22,8 @@
 .sidebar-header {
   padding: 2rem 1.5rem;
   text-align: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background: #ffffff;
   flex-shrink: 0;
 }
 
@@ -31,20 +31,21 @@
   width: 60px;
   height: 60px;
   margin: 0 auto 1rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #4CAF50, #2E7D32);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.8rem;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
 }
 
 .sidebar-header-title {
   font-size: 1.5rem;
   font-weight: 700;
   margin: 0 0 0.5rem 0;
-  color: white;
+  color: #000000;
   letter-spacing: 0.5px;
 }
 
@@ -52,13 +53,13 @@
   font-size: 1rem;
   font-weight: 500;
   margin: 0.5rem 0 0.25rem 0;
-  color: rgba(255, 255, 255, 0.95);
+  color: #000000;
 }
 
 .sidebar-header-email {
   display: block;
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: #000000;
   margin-top: 0.25rem;
 }
 
@@ -77,23 +78,23 @@
 }
 
 .sidebar-nav::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .sidebar-nav::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.2);
   border-radius: 3px;
 }
 
 .sidebar-nav::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.3);
 }
 
 .sidebar-nav-link {
   display: flex;
   align-items: center;
   padding: 1rem 1.5rem;
-  color: rgba(255, 255, 255, 0.85);
+  color: #000000;
   text-decoration: none;
   transition: all 0.3s ease;
   border-left: 3px solid transparent;
@@ -101,15 +102,15 @@
 }
 
 .sidebar-nav-link:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: white;
-  border-left-color: #667eea;
+  background: rgba(76, 175, 80, 0.08);
+  color: #000000;
+  border-left-color: #4CAF50;
 }
 
 .sidebar-nav-link-active {
-  background: rgba(102, 126, 234, 0.15);
-  color: white;
-  border-left-color: #667eea;
+  background: rgba(76, 175, 80, 0.1);
+  color: #000000;
+  border-left-color: #4CAF50;
   font-weight: 600;
 }
 
@@ -121,7 +122,7 @@
   transform: translateY(-50%);
   width: 4px;
   height: 70%;
-  background: #667eea;
+  background: #4CAF50;
   border-radius: 2px 0 0 2px;
 }
 
@@ -130,11 +131,13 @@
   margin-right: 1rem;
   min-width: 24px;
   text-align: center;
+  color: #000000;
 }
 
 .sidebar-nav-text {
   font-size: 1rem;
   font-weight: 500;
+  color: #000000;
 }
 
 /* ========================================
@@ -142,8 +145,8 @@
 ======================================== */
 .sidebar-footer {
   padding: 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(0, 0, 0, 0.1);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  background: #ffffff;
   flex-shrink: 0;
 }
 
@@ -169,80 +172,12 @@
    MOBILE STYLES (< 992px)
 ======================================== */
 @media (max-width: 991.98px) {
-  /* Hide sidebar by default on mobile */
+  /* Hide sidebar completely on mobile - use mobile navbar instead */
   .sidebar-container {
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-    z-index: 1050;
-  }
-
-  /* Show sidebar when mobile menu is open */
-  .sidebar-mobile-open {
-    transform: translateX(0);
-  }
-
-  /* Mobile toggle button */
-  .sidebar-mobile-toggle {
-    position: fixed;
-    top: 1rem;
-    left: 1rem;
-    z-index: 1040;
-    width: 45px;
-    height: 45px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    transition: all 0.3s ease;
-  }
-
-  .sidebar-mobile-toggle:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-  }
-
-  .sidebar-mobile-toggle:active {
-    transform: scale(0.98);
-  }
-
-  /* Mobile backdrop */
-  .sidebar-mobile-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
-    z-index: 1040;
-    animation: fadeIn 0.3s ease;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-}
-
-/* ========================================
-   DESKTOP STYLES (>= 992px)
-======================================== */
-@media (min-width: 992px) {
-  .sidebar-mobile-toggle {
-    display: none;
-  }
-
-  .sidebar-mobile-backdrop {
-    display: none;
+    display: none !important;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
   }
 }
 
@@ -256,52 +191,11 @@
 }
 
 /* ========================================
-   SMALL MOBILE (< 576px)
-======================================== */
-@media (max-width: 575.98px) {
-  .sidebar-container {
-    width: 280px;
-    max-width: 85vw;
-  }
-
-  .sidebar-header {
-    padding: 1.5rem 1rem;
-  }
-
-  .sidebar-header-icon {
-    width: 50px;
-    height: 50px;
-    font-size: 1.5rem;
-  }
-
-  .sidebar-header-title {
-    font-size: 1.3rem;
-  }
-
-  .sidebar-nav-link {
-    padding: 0.875rem 1.25rem;
-  }
-
-  .sidebar-nav-icon {
-    font-size: 1.2rem;
-  }
-
-  .sidebar-nav-text {
-    font-size: 0.95rem;
-  }
-
-  .sidebar-footer {
-    padding: 1.25rem;
-  }
-}
-
-/* ========================================
    ACCESSIBILITY
 ======================================== */
 .sidebar-nav-link:focus,
-.sidebar-logout-btn:focus,
-.sidebar-mobile-toggle:focus {
-  outline: 2px solid #667eea;
+.sidebar-logout-btn:focus {
+  outline: 2px solid #4CAF50;
   outline-offset: 2px;
 }
 
@@ -309,8 +203,7 @@
 @media (prefers-reduced-motion: reduce) {
   .sidebar-container,
   .sidebar-nav-link,
-  .sidebar-logout-btn,
-  .sidebar-mobile-toggle {
+  .sidebar-logout-btn {
     transition: none;
     animation: none;
   }

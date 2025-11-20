@@ -1,0 +1,234 @@
+/* ========================================
+   SELLER MOBILE NAVBAR - BOTTOM FIXED
+======================================== */
+.seller-mobile-navbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background: #2c3e50;
+  display: none; /* Hidden by default, shown on mobile */
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 0.5rem;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+}
+
+/* ========================================
+   MOBILE NAV ITEMS
+======================================== */
+.seller-mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  min-width: 60px;
+}
+
+.seller-mobile-nav-item:hover {
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.seller-mobile-nav-item.active {
+  color: #ffffff;
+  background: rgba(76, 175, 80, 0.15);
+}
+
+.seller-mobile-nav-item.active .seller-mobile-nav-icon {
+  color: #4CAF50;
+}
+
+/* ========================================
+   NAV ICONS
+======================================== */
+.seller-mobile-nav-icon {
+  position: relative;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ========================================
+   NAV LABELS
+======================================== */
+.seller-mobile-nav-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* ========================================
+   BADGES (NOTIFICATION COUNTS)
+======================================== */
+.seller-mobile-nav-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.2rem 0.4rem;
+  border-radius: 10px;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(76, 175, 80, 0.4);
+}
+
+.seller-mobile-nav-badge-warning {
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+  box-shadow: 0 2px 6px rgba(255, 152, 0, 0.4);
+}
+
+/* ========================================
+   ADD BUTTON (SPECIAL CENTER BUTTON)
+======================================== */
+.seller-mobile-nav-add {
+  position: relative;
+  margin: 0 0.5rem;
+}
+
+.seller-mobile-nav-icon-add {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.8rem;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+.seller-mobile-nav-add:hover .seller-mobile-nav-icon-add {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.5);
+}
+
+.seller-mobile-nav-add:active .seller-mobile-nav-icon-add {
+  transform: scale(0.95);
+}
+
+/* ========================================
+   SHOW ON MOBILE ONLY
+======================================== */
+@media (max-width: 991.98px) {
+  .seller-mobile-navbar {
+    display: flex;
+  }
+
+  /* Add padding to bottom of content to prevent navbar overlap */
+  .seller-layout-content {
+    padding-bottom: 90px !important;
+  }
+}
+
+/* ========================================
+   RESPONSIVE - TABLET
+======================================== */
+@media (max-width: 768px) {
+  .seller-mobile-navbar {
+    height: 65px;
+  }
+
+  .seller-mobile-nav-icon {
+    font-size: 1.4rem;
+  }
+
+  .seller-mobile-nav-label {
+    font-size: 0.65rem;
+  }
+
+  .seller-mobile-nav-icon-add {
+    width: 52px;
+    height: 52px;
+    font-size: 1.7rem;
+  }
+}
+
+/* ========================================
+   RESPONSIVE - SMALL MOBILE
+======================================== */
+@media (max-width: 480px) {
+  .seller-mobile-navbar {
+    height: 60px;
+    padding: 0 0.25rem;
+  }
+
+  .seller-mobile-nav-item {
+    padding: 0.4rem 0.5rem;
+    min-width: 55px;
+  }
+
+  .seller-mobile-nav-icon {
+    font-size: 1.3rem;
+  }
+
+  .seller-mobile-nav-label {
+    font-size: 0.6rem;
+  }
+
+  .seller-mobile-nav-badge {
+    font-size: 0.6rem;
+    padding: 0.15rem 0.35rem;
+    min-width: 16px;
+    height: 16px;
+  }
+
+  .seller-mobile-nav-icon-add {
+    width: 48px;
+    height: 48px;
+    font-size: 1.6rem;
+    margin-bottom: 0.75rem;
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY
+======================================== */
+.seller-mobile-nav-item:focus {
+  outline: 2px solid #4CAF50;
+  outline-offset: 2px;
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .seller-mobile-nav-item,
+  .seller-mobile-nav-icon-add {
+    transition: none;
+  }
+}
+
+/* ========================================
+   DARK THEME VARIANT (OPTIONAL)
+======================================== */
+.seller-mobile-navbar.dark-theme {
+  background: #1a1a1a;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ========================================
+   SAFE AREA INSETS (for iOS notch)
+======================================== */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .seller-mobile-navbar {
+    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+    height: calc(70px + env(safe-area-inset-bottom));
+  }
+}
