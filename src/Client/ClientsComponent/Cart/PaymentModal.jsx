@@ -1,4 +1,4 @@
-// PaymentModal.jsx - Refactored & Mobile Optimized
+// PaymentModal.jsx - Updated with unified scrolling layout
 import React, { useState, useMemo } from 'react';
 import PaymentMethodCard from './PaymentMethodCard';
 import UPIPaymentForm from './UPIPaymentForm';
@@ -110,46 +110,61 @@ const PaymentModal = ({ show, onClose, orderTotal, onPaymentComplete }) => {
             </div>
           )}
 
-          {/* Payment Forms */}
-          {selectedMethod === 'upi' && (
-            <UPIPaymentForm 
-              onSubmit={handlePaymentSubmit}
-              totalAmount={total.toFixed(2)}
-            />
-          )}
+          {/* Payment Forms with Inline Price Summary */}
+          {selectedMethod && (
+            <>
+              {selectedMethod === 'upi' && (
+                <UPIPaymentForm 
+                  onSubmit={handlePaymentSubmit}
+                  totalAmount={total.toFixed(2)}
+                />
+              )}
 
-          {selectedMethod === 'card' && (
-            <CardPaymentForm 
-              onSubmit={handlePaymentSubmit}
-              totalAmount={total.toFixed(2)}
-            />
-          )}
+              {selectedMethod === 'card' && (
+                <CardPaymentForm 
+                  onSubmit={handlePaymentSubmit}
+                  totalAmount={total.toFixed(2)}
+                />
+              )}
 
-          {selectedMethod === 'netbanking' && (
-            <NetBankingForm 
-              onSubmit={handlePaymentSubmit}
-              totalAmount={total.toFixed(2)}
-            />
-          )}
+              {selectedMethod === 'netbanking' && (
+                <NetBankingForm 
+                  onSubmit={handlePaymentSubmit}
+                  totalAmount={total.toFixed(2)}
+                />
+              )}
 
-          {selectedMethod === 'cod' && (
-            <CODForm 
-              onSubmit={handlePaymentSubmit}
-              totalAmount={total.toFixed(2)}
-              handlingFee={handlingFee}
-            />
-          )}
-        </div>
+              {selectedMethod === 'cod' && (
+                <CODForm 
+                  onSubmit={handlePaymentSubmit}
+                  totalAmount={total.toFixed(2)}
+                  handlingFee={handlingFee}
+                  hideButton={true}
+                />
+              )}
 
-        {/* Price Summary - Always Visible */}
-        <div className="payment-footer">
-          <PriceSummary
-            subtotal={orderTotal}
-            platformFee={platformFee}
-            handlingFee={handlingFee}
-            tax={tax}
-            total={total}
-          />
+              {/* Price Summary - Inline after payment form */}
+              <div className="inline-price-summary">
+                <PriceSummary
+                  subtotal={orderTotal}
+                  platformFee={platformFee}
+                  handlingFee={handlingFee}
+                  tax={tax}
+                  total={total}
+                />
+                
+                {/* Place Order Button for COD */}
+                {selectedMethod === 'cod' && (
+                  <button 
+                    className="submit-payment-btn cod-btn"
+                    onClick={() => handlePaymentSubmit({ method: 'cod' })}
+                  >
+                    Place Order - Pay ₹{total.toFixed(2)} on Delivery
+                  </button>
+                )}
+              </div>
+            </>
+          )}
         </div>
 
         {/* Secure Badge */}

@@ -1,7 +1,7 @@
-// CODForm.jsx
+// CODForm.jsx - Updated to support optional button hiding
 import React, { memo } from 'react';
 
-const CODForm = memo(({ onSubmit, totalAmount, handlingFee }) => {
+const CODForm = memo(({ onSubmit, totalAmount, handlingFee, hideButton = false }) => {
   return (
     <div className="payment-form-container">
       <div className="form-header">
@@ -37,12 +37,15 @@ const CODForm = memo(({ onSubmit, totalAmount, handlingFee }) => {
           </div>
         </div>
 
-        <button 
-          className="submit-payment-btn cod-btn"
-          onClick={() => onSubmit({ method: 'cod' })}
-        >
-          Place Order - Pay ₹{totalAmount} on Delivery
-        </button>
+        {/* Only show button if hideButton is false */}
+        {!hideButton && (
+          <button 
+            className="submit-payment-btn cod-btn"
+            onClick={() => onSubmit({ method: 'cod' })}
+          >
+            Place Order - Pay ₹{totalAmount} on Delivery
+          </button>
+        )}
       </div>
     </div>
   );

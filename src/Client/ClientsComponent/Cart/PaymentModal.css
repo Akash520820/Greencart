@@ -1,4 +1,4 @@
-/* PaymentModal.css - Mobile Optimized */
+/* PaymentModal.css - Mobile Optimized with Unified Scrolling */
 
 /* ========================================
    MODAL OVERLAY & CONTAINER
@@ -540,12 +540,23 @@
 }
 
 /* ========================================
-   PRICE SUMMARY (FOOTER)
+   PRICE SUMMARY (INLINE)
 ======================================== */
-.payment-footer {
-  border-top: 1px solid #e2e8f0;
-  background: #f7fafc;
+.inline-price-summary {
   padding: 16px;
+  background: #f7fafc;
+  margin-top: 0;
+}
+
+.inline-price-summary .price-summary-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.inline-price-summary .submit-payment-btn {
+  margin-top: 0;
 }
 
 .price-summary-card {
