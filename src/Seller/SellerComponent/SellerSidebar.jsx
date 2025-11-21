@@ -1,6 +1,14 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSellerAuth } from '../../context/SellerAuthContext';
+import { 
+  FiShoppingBag,
+  FiGrid,
+  FiPackage,
+  FiPlusCircle,
+  FiClipboard,
+  FiLogOut
+} from 'react-icons/fi';
 import './SellerSidebar.css';
 
 const SellerSidebar = () => {
@@ -20,7 +28,7 @@ const SellerSidebar = () => {
       {/* Sidebar Header */}
       <div className="sidebar-header">
         <div className="sidebar-header-icon">
-          <i className="bi bi-shop"></i>
+          <FiShoppingBag />
         </div>
         <h2 className="sidebar-header-title">Seller Panel</h2>
         <p className="sidebar-header-shop-name">
@@ -37,7 +45,7 @@ const SellerSidebar = () => {
           to="/seller/dashboard" 
           className={`sidebar-nav-link ${isActive('/seller/dashboard') ? 'sidebar-nav-link-active' : ''}`}
         >
-          <i className="bi bi-speedometer2 sidebar-nav-icon"></i>
+          <FiGrid className="sidebar-nav-icon" />
           <span className="sidebar-nav-text">Dashboard</span>
         </Link>
         
@@ -45,7 +53,7 @@ const SellerSidebar = () => {
           to="/seller/orders" 
           className={`sidebar-nav-link ${isActive('/seller/orders') ? 'sidebar-nav-link-active' : ''}`}
         >
-          <i className="bi bi-box-seam sidebar-nav-icon"></i>
+          <FiPackage className="sidebar-nav-icon" />
           <span className="sidebar-nav-text">Orders</span>
         </Link>
         
@@ -53,7 +61,7 @@ const SellerSidebar = () => {
           to="/seller/add-product" 
           className={`sidebar-nav-link ${isActive('/seller/add-product') ? 'sidebar-nav-link-active' : ''}`}
         >
-          <i className="bi bi-plus-circle sidebar-nav-icon"></i>
+          <FiPlusCircle className="sidebar-nav-icon" />
           <span className="sidebar-nav-text">Add Product</span>
         </Link>
         
@@ -61,7 +69,7 @@ const SellerSidebar = () => {
           to="/seller/inventory" 
           className={`sidebar-nav-link ${isActive('/seller/inventory') ? 'sidebar-nav-link-active' : ''}`}
         >
-          <i className="bi bi-clipboard-data sidebar-nav-icon"></i>
+          <FiClipboard className="sidebar-nav-icon" />
           <span className="sidebar-nav-text">Inventory</span>
         </Link>
       </nav>
@@ -72,7 +80,7 @@ const SellerSidebar = () => {
           onClick={handleLogout} 
           className="sidebar-logout-btn btn btn-danger w-100"
         >
-          <i className="bi bi-box-arrow-right me-2"></i>
+          <FiLogOut style={{ marginRight: '8px' }} />
           Logout
         </button>
       </div>

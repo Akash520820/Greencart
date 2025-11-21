@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useProducts } from '../../context/ProductContext';
+import { FiSearch, FiInbox } from 'react-icons/fi';
 import './ManageInventory.css';
 
 const ManageInventory = () => {
@@ -7,10 +8,8 @@ const ManageInventory = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('All');
 
-  // Get all unique categories
   const categories = ['All', ...new Set(products.map(p => p.category))];
 
-  // Filter products
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = categoryFilter === 'All' || product.category === categoryFilter;
@@ -46,13 +45,16 @@ const ManageInventory = () => {
 
       {/* Filters */}
       <div className="seller-inventory-filters">
-        <input
-          type="text"
-          placeholder="Search products by name..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="seller-search-input"
-        />
+        <div className="seller-search-wrapper">
+          <FiSearch className="seller-search-icon" />
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="seller-search-input"
+          />
+        </div>
 
         <select
           value={categoryFilter}
@@ -65,8 +67,8 @@ const ManageInventory = () => {
         </select>
       </div>
 
-      {/* Products Table */}
-      <div className="seller-inventory-table-container">
+      {/* Desktop Table View */}
+      <div className="seller-inventory-table-container seller-desktop-view">
         <table className="seller-inventory-table">
           <thead>
             <tr>
@@ -115,7 +117,7 @@ const ManageInventory = () => {
               <tr>
                 <td colSpan="4" className="seller-no-products-cell">
                   <div className="seller-no-products-message">
-                    <i className="bi bi-inbox"></i>
+                    <FiInbox size={48} />
                     <p>No products found</p>
                   </div>
                 </td>
@@ -123,6 +125,55 @@ const ManageInventory = () => {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="seller-mobile-view">
+        {filteredProducts.length > 0 ? (
+          <div className="seller-product-cards">
+            {filteredProducts.map((product) => (
+              <div key={product._id} className="seller-product-card">
+                <div className="seller-card-left">
+                  <img 
+                    src={product.image[0] || product.image} 
+                    alt={product.name}
+                    className="seller-card-image"
+                    onError={(e) => {
+                      e.target.src = 'https://via.placeholder.com/70?text=No+Image';
+                    }}
+                  />
+                </div>
+                <div className="seller-card-content">
+                  <h3 className="seller-card-title">{product.name}</h3>
+                  <span className="seller-card-category">{product.category}</span>
+                  <div className="seller-card-footer">
+                    <span className="seller-card-price">
+                      ${product.offerPrice || product.price}
+                    </span>
+                    <div className="seller-card-stock">
+                      <span className={`seller-stock-label ${product.inStock ? 'in-stock' : 'out-stock'}`}>
+                        {product.inStock ? 'In Stock' : 'Out of Stock'}
+                      </span>
+                      <label className="seller-toggle-switch seller-toggle-small">
+                        <input
+                          type="checkbox"
+                          checked={product.inStock}
+                          onChange={() => handleStockToggle(product._id)}
+                        />
+                        <span className="seller-toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="seller-no-products-mobile">
+            <FiInbox size={48} />
+            <p>No products found</p>
+          </div>
+        )}
       </div>
     </div>
   );

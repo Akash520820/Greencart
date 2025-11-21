@@ -1,12 +1,11 @@
-// Cart.jsx - Fixed with OrderContext
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+// Cart.jsx - FIXED (Prevents duplicate order creation)
+import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import { useCart } from '../../context/CartContext';
 import { useClientAuth } from '../../context/ClientAuthContext';
-import { useOrders } from '../../context/OrderContext'; // 👈 Add this
+import { useOrders } from '../../context/OrderContext';
 
-// Separated Components
 import CartHeader from '../ClientsComponent/Cart/CartHeader';
 import CartItemsList from '../ClientsComponent/Cart/CartItemsList';
 import EmptyCart from '../ClientsComponent/Cart/EmptyCart';
@@ -23,13 +22,14 @@ const Cart = () => {
   const navigate = useNavigate();
   const { cartItems, updateQuantity, removeFromCart, getTotalPrice, clearCart } = useCart();
   const { isAuthenticated, user } = useClientAuth();
-  const { createOrder } = useOrders(); // 👈 Add this
+  const { createOrder } = useOrders();
   
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [addresses, setAddresses] = useState([]);
+  const [isProcessingOrder, setIsProcessingOrder] = useState(false); // 👈 Prevent double submission
   const [newAddress, setNewAddress] = useState({
     fullName: '',
     phone: '',
@@ -183,84 +183,83 @@ const Cart = () => {
       toast.error('Please add a delivery address first', {
         duration: 3000,
         position: 'top-center',
-        style: {
-          background: '#fff',
-          color: '#2d3748',
-          padding: '16px',
-          borderRadius: '8px',
-          fontSize: '14px',
-          fontWeight: '600',
-        },
-        iconTheme: {
-          primary: '#e53e3e',
-          secondary: '#fff',
-        },
       });
       return;
     }
     setShowPaymentModal(true);
   }, [selectedAddress]);
 
+  // 👇 FIXED: Prevent duplicate order creation
   const handlePaymentComplete = useCallback((paymentDetails) => {
-    const subtotal = getTotalPrice();
-    const platformFee = 5;
-    const handlingFee = paymentDetails.method === 'cod' ? 9 : 0;
-    const tax = subtotal * 0.02;
-    const total = subtotal + platformFee + handlingFee + tax;
+    // Prevent double submission
+    if (isProcessingOrder) {
+      console.log('Order already being processed, skipping...');
+      return;
+    }
+    
+    setIsProcessingOrder(true); // 👈 Lock to prevent duplicate
+    
+    try {
+      const subtotal = getTotalPrice();
+      const platformFee = 5;
+      const handlingFee = paymentDetails.method === 'cod' ? 9 : 0;
+      const tax = subtotal * 0.02;
+      const total = subtotal + platformFee + handlingFee + tax;
 
-    // 👇 Create order using OrderContext
-    const orderData = {
-      userId: user?.email,
-      userName: user?.name || user?.email,
-      userEmail: user?.email,
-      items: cartItems.map(item => ({
-        product: item, // Full product object
-        quantity: item.quantity,
-        priceAtOrder: item.offerPrice || item.price
-      })),
-      address: {
-        ...selectedAddress,
-        fullAddress: `${selectedAddress.addressLine1}, ${selectedAddress.addressLine2 ? selectedAddress.addressLine2 + ', ' : ''}${selectedAddress.city}, ${selectedAddress.state} - ${selectedAddress.pincode}`
-      },
-      paymentMethod: paymentDetails.method,
-      paymentDetails: paymentDetails.details,
-      subtotal: parseFloat(subtotal.toFixed(2)),
-      tax: parseFloat(tax.toFixed(2)),
-      platformFee,
-      handlingFee,
-      shipping: 0,
-      total: parseFloat(total.toFixed(2))
-    };
+      const orderData = {
+        userId: user?.email,
+        userName: user?.name || user?.email,
+        userEmail: user?.email,
+        items: cartItems.map(item => ({
+          product: item,
+          quantity: item.quantity,
+          priceAtOrder: item.offerPrice || item.price
+        })),
+        address: {
+          ...selectedAddress,
+          fullAddress: `${selectedAddress.addressLine1}, ${selectedAddress.addressLine2 ? selectedAddress.addressLine2 + ', ' : ''}${selectedAddress.city}, ${selectedAddress.state} - ${selectedAddress.pincode}`
+        },
+        paymentMethod: paymentDetails.method,
+        paymentDetails: paymentDetails.details,
+        subtotal: parseFloat(subtotal.toFixed(2)),
+        tax: parseFloat(tax.toFixed(2)),
+        platformFee,
+        handlingFee,
+        shipping: 0,
+        total: parseFloat(total.toFixed(2))
+      };
 
-    // Create order using context
-    const createdOrder = createOrder(orderData);
+      // Create order using context (only once!)
+      const createdOrder = createOrder(orderData);
+      console.log('Order created successfully:', createdOrder.orderId);
 
-    // Clear cart
-    clearCart();
-    setShowPaymentModal(false);
+      // Clear cart
+      clearCart();
+      setShowPaymentModal(false);
 
-    // Success toast
-    toast.success('Order placed successfully! 🎉', {
-      duration: 4000,
-      position: 'top-center',
-      style: {
-        background: '#fff',
-        color: '#2d3748',
-        padding: '16px',
-        borderRadius: '8px',
-        fontSize: '14px',
-        fontWeight: '600',
-      },
-      iconTheme: {
-        primary: '#4CAF50',
-        secondary: '#fff',
-      },
-    });
+      // Success toast
+      toast.success('Order placed successfully! 🎉', {
+        duration: 4000,
+        position: 'top-center',
+      });
 
-    setTimeout(() => {
-      navigate('/my-orders');
-    }, 1000);
-  }, [cartItems, selectedAddress, user, getTotalPrice, clearCart, navigate, createOrder]);
+      setTimeout(() => {
+        navigate('/my-orders');
+      }, 1000);
+      
+    } catch (error) {
+      console.error('Error creating order:', error);
+      toast.error('Failed to place order. Please try again.');
+      setIsProcessingOrder(false); // Reset on error
+    }
+  }, [cartItems, selectedAddress, user, getTotalPrice, clearCart, navigate, createOrder, isProcessingOrder]);
+
+  // Reset processing state when modal closes
+  useEffect(() => {
+    if (!showPaymentModal) {
+      setIsProcessingOrder(false);
+    }
+  }, [showPaymentModal]);
 
   // Early returns
   if (!isAuthenticated) {
@@ -284,7 +283,6 @@ const Cart = () => {
         <CartHeader itemCount={cartItems.length} />
 
         <div className="cart-content">
-          {/* Left: Cart Items */}
           <CartItemsList
             items={cartItems}
             onQuantityChange={handleQuantityChange}
@@ -292,18 +290,15 @@ const Cart = () => {
             onClearCart={handleClearCart}
           />
 
-          {/* Right: Summary */}
           <div className="cart-summary-section">
             <div className="cart-summary">
               <h2 className="cart-summary-title">Order Summary</h2>
               
-              {/* Address Section */}
               <AddressSection
                 selectedAddress={selectedAddress}
                 onChangeAddress={() => setShowAddressModal(true)}
               />
 
-              {/* Price Breakdown */}
               <PriceBreakdown
                 subtotal={priceData.subtotal}
                 tax={priceData.tax}
@@ -329,7 +324,6 @@ const Cart = () => {
           </div>
         </div>
 
-        {/* Modals */}
         <AddressModal
           show={showAddressModal}
           addresses={addresses}

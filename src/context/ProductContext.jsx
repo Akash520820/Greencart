@@ -1,5 +1,5 @@
-// ProductContext.jsx - FIXED VERSION
-import React, { createContext, useContext, useState, useEffect } from 'react';
+// ProductContext.jsx - FIXED VERSION (No Duplicate Products)
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { dummyProducts } from '../assets/assets';
 
 const ProductContext = createContext();
@@ -7,76 +7,58 @@ const ProductContext = createContext();
 export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const isInitialized = useRef(false); // Prevent double initialization
 
-  // 👈 FIXED: Better initialization with proper loading state
+  // Initialize products ONCE
   useEffect(() => {
+    if (isInitialized.current) return; // Already initialized
+    isInitialized.current = true;
+
     const initializeProducts = () => {
       try {
         const savedProducts = localStorage.getItem('allProducts');
         
         if (savedProducts) {
           const parsedProducts = JSON.parse(savedProducts);
-          setProducts(parsedProducts);
-          console.log('Products loaded from localStorage:', parsedProducts.length); // Debug log
+          // Remove duplicates by _id
+          const uniqueProducts = parsedProducts.filter((product, index, self) =>
+            index === self.findIndex(p => p._id === product._id)
+          );
+          setProducts(uniqueProducts);
+          // Save cleaned data back
+          if (uniqueProducts.length !== parsedProducts.length) {
+            localStorage.setItem('allProducts', JSON.stringify(uniqueProducts));
+          }
+          console.log('Products loaded:', uniqueProducts.length);
         } else {
           // First time - initialize with dummy data
-          setProducts(dummyProducts);
-          localStorage.setItem('allProducts', JSON.stringify(dummyProducts));
-          console.log('Initialized with dummy products:', dummyProducts.length); // Debug log
+          const uniqueDummy = dummyProducts.filter((product, index, self) =>
+            index === self.findIndex(p => p._id === product._id)
+          );
+          setProducts(uniqueDummy);
+          localStorage.setItem('allProducts', JSON.stringify(uniqueDummy));
+          console.log('Initialized with dummy products:', uniqueDummy.length);
         }
       } catch (error) {
         console.error('Error loading products:', error);
-        // Fallback to dummy products on error
         setProducts(dummyProducts);
-        try {
-          localStorage.setItem('allProducts', JSON.stringify(dummyProducts));
-        } catch (e) {
-          console.error('Failed to save dummy products:', e);
-        }
+        localStorage.setItem('allProducts', JSON.stringify(dummyProducts));
       } finally {
-        setLoading(false); // 👈 Always set loading to false
+        setLoading(false);
       }
     };
 
     initializeProducts();
-  }, []); // Only run once on mount
+  }, []);
 
-  // 👈 FIXED: Save to localStorage whenever products change (but only after initial load)
+  // Save to localStorage when products change (after init)
   useEffect(() => {
     if (!loading && products.length > 0) {
-      try {
-        localStorage.setItem('allProducts', JSON.stringify(products));
-        console.log('Products saved to localStorage:', products.length); // Debug log
-      } catch (error) {
-        console.error('Error saving products:', error);
-      }
+      localStorage.setItem('allProducts', JSON.stringify(products));
     }
   }, [products, loading]);
 
-  // Helper function to safely save to localStorage
-  const safeLocalStorageSave = (key, data) => {
-    try {
-      const jsonString = JSON.stringify(data);
-      localStorage.setItem(key, jsonString);
-      return { success: true };
-    } catch (error) {
-      console.error('localStorage save error:', error);
-      
-      if (error.name === 'QuotaExceededError') {
-        return { 
-          success: false, 
-          error: 'Storage quota exceeded. Please delete old products or reduce image sizes.' 
-        };
-      }
-      
-      return { 
-        success: false, 
-        error: 'Failed to save product. Please try again.' 
-      };
-    }
-  };
-
-  // Seller: Add new product
+  // Add new product - FIXED to prevent duplicates
   const addProduct = (productData) => {
     const newProduct = {
       _id: `prod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -93,20 +75,22 @@ export const ProductProvider = ({ children }) => {
     };
 
     setProducts(prevProducts => {
-      const updatedProducts = [...prevProducts, newProduct];
-      
-      // Try to save to localStorage
-      const saveResult = safeLocalStorageSave('allProducts', updatedProducts);
-      
-      if (!saveResult.success) {
-        // If save failed, throw error to be caught by calling component
-        const error = new Error(saveResult.error);
-        error.name = 'QuotaExceededError';
-        throw error;
+      // Check if product already exists (prevent duplicates)
+      if (prevProducts.some(p => p._id === newProduct._id)) {
+        console.warn('Product already exists, skipping...');
+        return prevProducts;
       }
       
-      // Trigger event for real-time updates
-      window.dispatchEvent(new Event('productsUpdated'));
+      const updatedProducts = [...prevProducts, newProduct];
+      
+      // Save immediately to localStorage
+      try {
+        localStorage.setItem('allProducts', JSON.stringify(updatedProducts));
+        window.dispatchEvent(new Event('productsUpdated'));
+      } catch (error) {
+        console.error('Error saving product:', error);
+        throw error;
+      }
       
       return updatedProducts;
     });
@@ -114,167 +98,95 @@ export const ProductProvider = ({ children }) => {
     return newProduct;
   };
 
-  // Seller: Update product
+  // Update product
   const updateProduct = (productId, updates) => {
     setProducts(prevProducts => {
       const updatedProducts = prevProducts.map(product =>
         product._id === productId
-          ? { 
-              ...product, 
-              ...updates, 
-              updatedAt: new Date().toISOString() 
-            }
+          ? { ...product, ...updates, updatedAt: new Date().toISOString() }
           : product
       );
-
-      const saveResult = safeLocalStorageSave('allProducts', updatedProducts);
-      
-      if (!saveResult.success) {
-        throw new Error(saveResult.error);
-      }
-      
+      localStorage.setItem('allProducts', JSON.stringify(updatedProducts));
       window.dispatchEvent(new Event('productsUpdated'));
-      
       return updatedProducts;
     });
   };
 
-  // Seller: Delete product
+  // Delete product
   const deleteProduct = (productId) => {
     setProducts(prevProducts => {
-      const updatedProducts = prevProducts.filter(product => product._id !== productId);
-      
-      const saveResult = safeLocalStorageSave('allProducts', updatedProducts);
-      
-      if (!saveResult.success) {
-        throw new Error(saveResult.error);
-      }
-      
+      const updatedProducts = prevProducts.filter(p => p._id !== productId);
+      localStorage.setItem('allProducts', JSON.stringify(updatedProducts));
       window.dispatchEvent(new Event('productsUpdated'));
-      
       return updatedProducts;
     });
   };
 
-  // Seller: Toggle stock status
+  // Toggle stock status
   const toggleStock = (productId) => {
     setProducts(prevProducts => {
       const updatedProducts = prevProducts.map(product =>
         product._id === productId
-          ? { 
-              ...product, 
-              inStock: !product.inStock,
-              updatedAt: new Date().toISOString()
-            }
+          ? { ...product, inStock: !product.inStock, updatedAt: new Date().toISOString() }
           : product
       );
-
-      const saveResult = safeLocalStorageSave('allProducts', updatedProducts);
-      
-      if (!saveResult.success) {
-        throw new Error(saveResult.error);
-      }
-      
+      localStorage.setItem('allProducts', JSON.stringify(updatedProducts));
       window.dispatchEvent(new Event('productsUpdated'));
-      
       return updatedProducts;
     });
   };
 
-  // Client: Get all products (only in stock)
-  const getAvailableProducts = () => {
-    return products.filter(product => product.inStock);
-  };
+  // Get all available products (in stock only)
+  const getAvailableProducts = () => products.filter(p => p.inStock);
 
   // Get products by category
   const getProductsByCategory = (category) => {
     if (category === 'All') return products.filter(p => p.inStock);
-    return products.filter(product => 
-      product.category === category && product.inStock
-    );
+    return products.filter(p => p.category === category && p.inStock);
   };
 
   // Get product by ID
-  const getProductById = (productId) => {
-    return products.find(product => product._id === productId);
-  };
+  const getProductById = (productId) => products.find(p => p._id === productId);
 
   // Search products
   const searchProducts = (searchTerm) => {
     if (!searchTerm) return products.filter(p => p.inStock);
     const term = searchTerm.toLowerCase();
-    return products.filter(product =>
-      product.inStock && (
-        product.name.toLowerCase().includes(term) ||
-        product.category.toLowerCase().includes(term)
+    return products.filter(p =>
+      p.inStock && (
+        p.name.toLowerCase().includes(term) ||
+        p.category.toLowerCase().includes(term)
       )
     );
   };
 
-  // Get all unique categories
+  // Get all categories
   const getAllCategories = () => {
-    const categories = [...new Set(products.map(product => product.category))];
+    const categories = [...new Set(products.map(p => p.category))];
     return ['All', ...categories];
   };
 
-  // Seller: Get seller's products stats
-  const getSellerStats = (sellerId = 'default-seller') => {
-    const sellerProducts = products.filter(p => p.sellerId === sellerId);
-    return {
-      totalProducts: sellerProducts.length,
-      inStock: sellerProducts.filter(p => p.inStock).length,
-      outOfStock: sellerProducts.filter(p => !p.inStock).length
-    };
-  };
+  // Get seller stats
+  const getSellerStats = () => ({
+    totalProducts: products.length,
+    inStock: products.filter(p => p.inStock).length,
+    outOfStock: products.filter(p => !p.inStock).length
+  });
 
-  // Get storage usage info
-  const getStorageInfo = () => {
-    try {
-      let total = 0;
-      for (let key in localStorage) {
-        if (localStorage.hasOwnProperty(key)) {
-          total += (localStorage[key].length + key.length) * 2; // UTF-16
-        }
-      }
-      const usedMB = (total / (1024 * 1024)).toFixed(2);
-      const limitMB = 5; // Most browsers ~5-10MB
-      const percentUsed = ((total / (limitMB * 1024 * 1024)) * 100).toFixed(1);
-      
-      return {
-        usedMB,
-        limitMB,
-        percentUsed
-      };
-    } catch (e) {
-      return null;
-    }
-  };
-
-  // 👈 FIXED: Listen for storage changes (sync across tabs)
+  // Listen for storage changes
   useEffect(() => {
     const handleStorageChange = (e) => {
-      // Only reload if allProducts changed
-      if (e.key === 'allProducts' || e.type === 'productsUpdated') {
-        const savedProducts = localStorage.getItem('allProducts');
-        if (savedProducts) {
-          try {
-            const parsedProducts = JSON.parse(savedProducts);
-            setProducts(parsedProducts);
-            console.log('Products reloaded from storage event:', parsedProducts.length); // Debug log
-          } catch (error) {
-            console.error('Error parsing products from storage event:', error);
-          }
+      if (e.key === 'allProducts' && e.newValue) {
+        try {
+          setProducts(JSON.parse(e.newValue));
+        } catch (err) {
+          console.error('Error parsing products:', err);
         }
       }
     };
 
-    window.addEventListener('productsUpdated', handleStorageChange);
     window.addEventListener('storage', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('productsUpdated', handleStorageChange);
-      window.removeEventListener('storage', handleStorageChange);
-    };
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   const value = {
@@ -289,8 +201,7 @@ export const ProductProvider = ({ children }) => {
     getProductById,
     searchProducts,
     getAllCategories,
-    getSellerStats,
-    getStorageInfo
+    getSellerStats
   };
 
   return (
