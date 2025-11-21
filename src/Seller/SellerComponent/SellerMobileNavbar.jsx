@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useOrders } from '../../context/OrderContext';
 import { useProducts } from '../../context/ProductContext';
@@ -21,13 +21,30 @@ const SellerMobileNavbar = () => {
   const { seller, sellerLogout } = useSellerAuth();
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   
-  // Get pending orders count
   const orderStats = getOrderStats();
   const pendingOrdersCount = orderStats.pendingOrders;
 
   const isActive = (path) => location.pathname === path;
 
+  // 👇 Close account menu on window resize (fixes the bug)
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 991.98) {
+        setShowAccountMenu(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // 👇 Close menu on route change
+  useEffect(() => {
+    setShowAccountMenu(false);
+  }, [location.pathname]);
+
   const handleLogout = () => {
+    setShowAccountMenu(false);
     sellerLogout();
     navigate('/seller/auth');
   };

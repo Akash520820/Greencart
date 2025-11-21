@@ -17,7 +17,7 @@
 }
 
 /* ========================================
-   SIDEBAR HEADER
+   SIDEBAR HEADER - CLICKABLE
 ======================================== */
 .sidebar-header {
   padding: 2rem 1.5rem;
@@ -25,6 +25,20 @@
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   background: #ffffff;
   flex-shrink: 0;
+  position: relative;
+}
+
+.sidebar-header-clickable {
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.sidebar-header-clickable:hover {
+  background: #f8f9fa;
+}
+
+.sidebar-header-clickable:hover .sidebar-header-hint {
+  opacity: 1;
 }
 
 .sidebar-header-icon {
@@ -39,6 +53,12 @@
   font-size: 1.8rem;
   color: #ffffff;
   box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sidebar-header-clickable:hover .sidebar-header-icon {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5);
 }
 
 .sidebar-header-title {
@@ -59,12 +79,182 @@
 .sidebar-header-email {
   display: block;
   font-size: 0.85rem;
-  color: #000000;
+  color: #666666;
   margin-top: 0.25rem;
 }
 
+.sidebar-header-hint {
+  display: block;
+  font-size: 0.7rem;
+  color: #4CAF50;
+  margin-top: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
 /* ========================================
-   SIDEBAR NAVIGATION - SCROLLABLE
+   ACCOUNT POPUP
+======================================== */
+.sidebar-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1100;
+  animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0;
+  }
+  to { 
+    opacity: 1;
+  }
+}
+
+.sidebar-account-popup {
+  position: fixed;
+  top: 50%;
+  left: 140px;
+  transform: translateY(-50%);
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  z-index: 1200;
+  width: 320px;
+  animation: popIn 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  overflow: hidden;
+}
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.7);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+}
+
+/* Popup Header */
+.sidebar-popup-header {
+  padding: 24px;
+  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.sidebar-popup-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.sidebar-popup-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar-popup-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-popup-role {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+/* Popup Details */
+.sidebar-popup-details {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.sidebar-popup-detail-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  color: #4a5568;
+  font-size: 0.9rem;
+}
+
+.sidebar-popup-detail-item:first-child {
+  padding-top: 0;
+}
+
+.sidebar-popup-detail-item:last-child {
+  padding-bottom: 0;
+}
+
+.sidebar-popup-detail-icon {
+  color: #4CAF50;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.sidebar-popup-detail-item span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Popup Actions */
+.sidebar-popup-actions {
+  padding: 16px 24px;
+}
+
+.sidebar-popup-logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.sidebar-popup-logout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+}
+
+.sidebar-popup-logout-btn:active {
+  transform: translateY(0);
+}
+
+/* ========================================
+   SIDEBAR NAVIGATION
 ======================================== */
 .sidebar-nav {
   flex: 1;
@@ -84,10 +274,6 @@
 .sidebar-nav::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.2);
   border-radius: 3px;
-}
-
-.sidebar-nav::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.3);
 }
 
 .sidebar-nav-link {
@@ -164,29 +350,31 @@
   box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
 }
 
-.sidebar-logout-btn:active {
-  transform: translateY(0);
-}
-
 /* ========================================
-   MOBILE STYLES (< 992px)
+   MOBILE STYLES
 ======================================== */
 @media (max-width: 991.98px) {
-  /* Hide sidebar completely on mobile - use mobile navbar instead */
   .sidebar-container {
     display: none !important;
-    visibility: hidden;
-    opacity: 0;
-    pointer-events: none;
+  }
+  
+  .sidebar-popup-overlay,
+  .sidebar-account-popup {
+    display: none !important;
   }
 }
 
 /* ========================================
-   TABLET STYLES (768px - 991px)
+   TABLET STYLES
 ======================================== */
-@media (min-width: 768px) and (max-width: 991.98px) {
+@media (min-width: 992px) and (max-width: 1199.98px) {
   .sidebar-container {
     width: 260px;
+  }
+  
+  .sidebar-account-popup {
+    left: 130px;
+    width: 300px;
   }
 }
 
@@ -194,16 +382,25 @@
    ACCESSIBILITY
 ======================================== */
 .sidebar-nav-link:focus,
-.sidebar-logout-btn:focus {
+.sidebar-logout-btn:focus,
+.sidebar-header-clickable:focus {
   outline: 2px solid #4CAF50;
   outline-offset: 2px;
 }
 
-/* Reduced motion for accessibility */
+.sidebar-popup-logout-btn:focus {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .sidebar-container,
   .sidebar-nav-link,
-  .sidebar-logout-btn {
+  .sidebar-logout-btn,
+  .sidebar-header-icon,
+  .sidebar-popup-overlay,
+  .sidebar-account-popup,
+  .sidebar-popup-logout-btn {
     transition: none;
     animation: none;
   }
