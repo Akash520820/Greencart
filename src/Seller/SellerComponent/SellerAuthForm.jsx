@@ -1,4 +1,5 @@
 import React from 'react';
+import PasswordInput from './PasswordInput';
 
 const SellerAuthForm = ({ 
   isLogin, 
@@ -42,20 +43,16 @@ const SellerAuthForm = ({
         />
       </div>
 
-      {/* Password Field */}
-      <div className="auth-form-input-group">
-        <label htmlFor="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          placeholder="Enter your password"
-          className="auth-form-input"
-          required
-        />
-      </div>
+      {/* Password Field with Show/Hide Toggle */}
+      <PasswordInput
+        id="password"
+        name="password"
+        value={formData.password}
+        onChange={handleChange}
+        placeholder="Enter your password"
+        label="Password"
+        required
+      />
 
       {/* Shop Name & Phone - Only for Signup */}
       {!isLogin && (

@@ -105,11 +105,12 @@ const SellerDashboard = () => {
 
   return (
     <div className="seller-dashboard">
-      {/* Header */}
-      <div className="dashboard-header">
-        <div>
+      {/* Beautiful Welcome Card */}
+      <div className="welcome-card">
+        <div className="welcome-card-content">
           <h1 className="dashboard-title">
-            Welcome back, {seller?.name || 'Seller'}! 👋
+            Welcome back, {seller?.name || 'Seller'}!
+            <span className="welcome-emoji">👋</span>
           </h1>
           <p className="dashboard-subtitle">
             Here's what's happening with your store today

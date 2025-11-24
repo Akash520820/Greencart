@@ -10,8 +10,10 @@
 .seller-inventory-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 2rem;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .seller-inventory-title {
@@ -39,6 +41,218 @@
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 600;
+}
+
+.seller-out-of-stock-badge {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  background: linear-gradient(135deg, #FF6B6B, #EE5A52);
+  color: white;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.seller-low-stock-badge {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  background: linear-gradient(135deg, #FFA726, #FB8C00);
+  color: white;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.seller-bulk-update-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #FFA726, #FB8C00);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 167, 38, 0.3);
+}
+
+.seller-bulk-update-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 167, 38, 0.4);
+}
+
+.seller-bulk-update-btn:active {
+  transform: translateY(0);
+}
+
+.seller-stock-status-badge {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.seller-stock-status-badge.in-stock {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.seller-stock-status-badge.low-stock {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.seller-stock-status-badge.out-of-stock {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* ========================================
+   QUANTITY CONTROLS
+======================================== */
+.seller-quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.seller-quantity-controls.mobile {
+  gap: 0.4rem;
+}
+
+.seller-quantity-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 2px solid #e2e8f0;
+  background: white;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.seller-quantity-btn:hover:not(:disabled) {
+  border-color: #4CAF50;
+  color: #4CAF50;
+  background: #f0fdf4;
+}
+
+.seller-quantity-btn.plus:hover:not(:disabled) {
+  background: #dcfce7;
+}
+
+.seller-quantity-btn.minus:hover:not(:disabled) {
+  background: #fee2e2;
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.seller-quantity-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.seller-quantity-value {
+  min-width: 50px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #2c3e50;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  background: #f8f9fa;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.seller-quantity-value:hover {
+  background: #e9ecef;
+}
+
+.seller-quantity-value.zero {
+  color: #dc2626;
+  background: #fef2f2;
+}
+
+.seller-quantity-value.low {
+  color: #d97706;
+  background: #fef3c7;
+}
+
+.seller-edit-icon {
+  display: none;
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  transform: translateY(-50%);
+  font-size: 0.7rem;
+  opacity: 0.6;
+}
+
+.seller-quantity-value:hover .seller-edit-icon {
+  display: inline-block;
+}
+
+/* Quantity Edit Mode */
+.seller-quantity-edit {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.seller-quantity-input {
+  width: 60px;
+  padding: 0.4rem;
+  border: 2px solid #4CAF50;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  outline: none;
+}
+
+.seller-quantity-input:focus {
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+}
+
+.seller-quantity-btn.save {
+  background: #4CAF50;
+  color: white;
+  border-color: #4CAF50;
+}
+
+.seller-quantity-btn.save:hover {
+  background: #45a049;
+}
+
+.seller-quantity-btn.cancel {
+  background: #ef4444;
+  color: white;
+  border-color: #ef4444;
+}
+
+.seller-quantity-btn.cancel:hover {
+  background: #dc2626;
 }
 
 /* ========================================
@@ -120,13 +334,14 @@
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
+  overflow-x: auto;
   border: 1px solid #e2e8f0;
 }
 
 .seller-inventory-table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 900px;
 }
 
 .seller-table-header {
@@ -158,7 +373,7 @@
 }
 
 .seller-product-cell {
-  width: 45%;
+  width: 35%;
 }
 
 .seller-product-info {
@@ -246,7 +461,6 @@
   transform: translateX(24px);
 }
 
-/* Small toggle for mobile */
 .seller-toggle-small {
   width: 44px;
   height: 24px;
@@ -369,6 +583,19 @@
   margin-bottom: 0.75rem;
 }
 
+.seller-card-quantity-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.seller-quantity-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
 .seller-card-footer {
   display: flex;
   justify-content: space-between;
@@ -403,6 +630,11 @@
   color: #166534;
 }
 
+.seller-stock-label.low-stock {
+  background: #fef3c7;
+  color: #92400e;
+}
+
 .seller-stock-label.out-stock {
   background: #fee2e2;
   color: #991b1b;
@@ -431,6 +663,15 @@
   .seller-inventory-page {
     padding: 1.5rem;
   }
+
+  .seller-inventory-header {
+    flex-direction: column;
+  }
+
+  .seller-bulk-update-btn {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 /* ========================================
@@ -447,7 +688,7 @@
 
   .seller-inventory-page {
     padding: 1rem;
-    padding-bottom: 100px; /* Space for bottom nav */
+    padding-bottom: 100px;
   }
 
   .seller-inventory-header {
@@ -459,7 +700,9 @@
     gap: 0.5rem;
   }
 
-  .seller-stats-badge {
+  .seller-stats-badge,
+  .seller-out-of-stock-badge,
+  .seller-low-stock-badge {
     font-size: 0.75rem;
     padding: 0.3rem 0.6rem;
   }
@@ -486,6 +729,17 @@
     width: 100%;
     padding: 0.75rem 2.5rem 0.75rem 1rem;
     font-size: 0.95rem;
+  }
+
+  .seller-quantity-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
+  }
+
+  .seller-quantity-value {
+    min-width: 40px;
+    font-size: 1rem;
   }
 }
 
@@ -524,20 +778,15 @@
     padding: 0.2rem 0.4rem;
   }
 
-  .seller-toggle-small {
-    width: 40px;
-    height: 22px;
+  .seller-quantity-btn {
+    width: 26px;
+    height: 26px;
+    font-size: 0.75rem;
   }
 
-  .seller-toggle-small .seller-toggle-slider:before {
-    height: 16px;
-    width: 16px;
-    left: 3px;
-    bottom: 3px;
-  }
-
-  .seller-toggle-small input:checked + .seller-toggle-slider:before {
-    transform: translateX(18px);
+  .seller-quantity-value {
+    min-width: 35px;
+    font-size: 0.95rem;
   }
 }
 
@@ -548,7 +797,8 @@
   .seller-product-card,
   .seller-toggle-slider,
   .seller-toggle-slider:before,
-  .seller-spinner {
+  .seller-spinner,
+  .seller-quantity-btn {
     transition: none;
     animation: none;
   }

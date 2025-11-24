@@ -1,23 +1,99 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useProducts } from '../../context/ProductContext';
-import { FiSearch, FiInbox } from 'react-icons/fi';
+import { FiSearch, FiInbox, FiPackage, FiPlus, FiMinus, FiEdit2, FiCheck, FiX } from 'react-icons/fi';
+import toast, { Toaster } from 'react-hot-toast';
 import './ManageInventory.css';
 
 const ManageInventory = () => {
-  const { products, toggleStock, loading } = useProducts();
+  const { products, toggleStock, updateProductQuantity, loading } = useProducts();
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('All');
+  const [stockFilter, setStockFilter] = useState('All');
+  const [editingQuantity, setEditingQuantity] = useState(null);
+  const [tempQuantity, setTempQuantity] = useState('');
 
   const categories = ['All', ...new Set(products.map(p => p.category))];
 
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = categoryFilter === 'All' || product.category === categoryFilter;
-    return matchesSearch && matchesCategory;
+    const matchesStock = stockFilter === 'All' || 
+                        (stockFilter === 'In Stock' && product.inStock) || 
+                        (stockFilter === 'Out of Stock' && !product.inStock);
+    return matchesSearch && matchesCategory && matchesStock;
   });
 
-  const handleStockToggle = (productId) => {
+  const outOfStockProducts = products.filter(p => !p.inStock);
+  const lowStockProducts = products.filter(p => p.quantity > 0 && p.quantity <= 10);
+
+  const handleStockToggle = (productId, productName, currentStatus) => {
     toggleStock(productId);
+    const newStatus = currentStatus ? 'Out of Stock' : 'In Stock';
+    toast.success(`${productName} is now ${newStatus}`, {
+      icon: currentStatus ? '❌' : '✅',
+      duration: 2000,
+    });
+  };
+
+  const handleQuantityChange = (productId, change) => {
+    const product = products.find(p => p._id === productId);
+    const newQuantity = Math.max(0, (product.quantity || 0) + change);
+    updateProductQuantity(productId, newQuantity);
+    
+    if (newQuantity === 0) {
+      toast.error(`${product.name} is now out of stock!`, {
+        icon: '⚠️',
+      });
+    } else if (newQuantity <= 5) {
+      toast.warning(`${product.name} stock is low (${newQuantity} remaining)`, {
+        icon: '⚠️',
+      });
+    } else {
+      toast.success(`Updated ${product.name} quantity to ${newQuantity}`, {
+        icon: '✅',
+      });
+    }
+  };
+
+  const startEditingQuantity = (productId, currentQuantity) => {
+    setEditingQuantity(productId);
+    setTempQuantity((currentQuantity || 0).toString());
+  };
+
+  const saveQuantity = (productId, productName) => {
+    const newQuantity = parseInt(tempQuantity) || 0;
+    if (newQuantity < 0) {
+      toast.error('Quantity cannot be negative');
+      return;
+    }
+    updateProductQuantity(productId, newQuantity);
+    setEditingQuantity(null);
+    toast.success(`Updated ${productName} quantity to ${newQuantity}`);
+  };
+
+  const cancelEdit = () => {
+    setEditingQuantity(null);
+    setTempQuantity('');
+  };
+
+  const handleBulkUpdateStock = () => {
+    if (outOfStockProducts.length === 0) {
+      toast.error('No out of stock products to update');
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Are you sure you want to mark all ${outOfStockProducts.length} out-of-stock products as available?`
+    );
+
+    if (confirmed) {
+      outOfStockProducts.forEach(product => {
+        toggleStock(product._id);
+      });
+      toast.success(`✅ ${outOfStockProducts.length} products marked as in stock!`, {
+        duration: 3000,
+      });
+    }
   };
 
   if (loading) {
@@ -31,16 +107,38 @@ const ManageInventory = () => {
 
   return (
     <div className="seller-inventory-page">
+      <Toaster position="top-center" />
+      
       <div className="seller-inventory-header">
         <div>
           <h1 className="seller-inventory-title">
             All Products
             <span className="seller-stats-badge">{filteredProducts.length} Items</span>
+            {outOfStockProducts.length > 0 && (
+              <span className="seller-out-of-stock-badge">
+                {outOfStockProducts.length} Out of Stock
+              </span>
+            )}
+            {lowStockProducts.length > 0 && (
+              <span className="seller-low-stock-badge">
+                {lowStockProducts.length} Low Stock
+              </span>
+            )}
           </h1>
           <p className="seller-inventory-subtitle">
-            Manage your product inventory and stock status
+            Manage your product inventory, stock status, and quantities
           </p>
         </div>
+
+        {outOfStockProducts.length > 0 && (
+          <button 
+            className="seller-bulk-update-btn"
+            onClick={handleBulkUpdateStock}
+          >
+            <FiPackage />
+            Update All Stock ({outOfStockProducts.length})
+          </button>
+        )}
       </div>
 
       {/* Filters */}
@@ -65,6 +163,16 @@ const ManageInventory = () => {
             <option key={index} value={cat}>{cat}</option>
           ))}
         </select>
+
+        <select
+          value={stockFilter}
+          onChange={(e) => setStockFilter(e.target.value)}
+          className="seller-category-select"
+        >
+          <option value="All">All Stock Status</option>
+          <option value="In Stock">In Stock Only</option>
+          <option value="Out of Stock">Out of Stock Only</option>
+        </select>
       </div>
 
       {/* Desktop Table View */}
@@ -74,8 +182,10 @@ const ManageInventory = () => {
             <tr>
               <th className="seller-table-header">Product</th>
               <th className="seller-table-header">Category</th>
-              <th className="seller-table-header">Selling Price</th>
-              <th className="seller-table-header">In Stock</th>
+              <th className="seller-table-header">Price</th>
+              <th className="seller-table-header">Quantity</th>
+              <th className="seller-table-header">Status</th>
+              <th className="seller-table-header">Available</th>
             </tr>
           </thead>
           <tbody>
@@ -102,11 +212,86 @@ const ManageInventory = () => {
                     ${product.offerPrice || product.price}
                   </td>
                   <td className="seller-table-cell">
+                    <div className="seller-quantity-controls">
+                      {editingQuantity === product._id ? (
+                        <div className="seller-quantity-edit">
+                          <input
+                            type="number"
+                            value={tempQuantity}
+                            onChange={(e) => setTempQuantity(e.target.value)}
+                            className="seller-quantity-input"
+                            min="0"
+                            autoFocus
+                            onKeyPress={(e) => {
+                              if (e.key === 'Enter') {
+                                saveQuantity(product._id, product.name);
+                              } else if (e.key === 'Escape') {
+                                cancelEdit();
+                              }
+                            }}
+                          />
+                          <button
+                            onClick={() => saveQuantity(product._id, product.name)}
+                            className="seller-quantity-btn save"
+                            title="Save"
+                          >
+                            <FiCheck />
+                          </button>
+                          <button
+                            onClick={cancelEdit}
+                            className="seller-quantity-btn cancel"
+                            title="Cancel"
+                          >
+                            <FiX />
+                          </button>
+                        </div>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => handleQuantityChange(product._id, -1)}
+                            className="seller-quantity-btn minus"
+                            disabled={(product.quantity || 0) <= 0}
+                          >
+                            <FiMinus />
+                          </button>
+                          <span 
+                            className={`seller-quantity-value ${
+                              (product.quantity || 0) === 0 ? 'zero' : 
+                              (product.quantity || 0) <= 10 ? 'low' : ''
+                            }`}
+                            onClick={() => startEditingQuantity(product._id, product.quantity)}
+                            title="Click to edit"
+                          >
+                            {product.quantity || 0}
+                            <FiEdit2 className="seller-edit-icon" />
+                          </span>
+                          <button
+                            onClick={() => handleQuantityChange(product._id, 1)}
+                            className="seller-quantity-btn plus"
+                          >
+                            <FiPlus />
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </td>
+                  <td className="seller-table-cell">
+                    <span className={`seller-stock-status-badge ${
+                      (product.quantity || 0) === 0 ? 'out-of-stock' :
+                      (product.quantity || 0) <= 10 ? 'low-stock' :
+                      'in-stock'
+                    }`}>
+                      {(product.quantity || 0) === 0 ? 'Out of Stock' :
+                       (product.quantity || 0) <= 10 ? 'Low Stock' :
+                       'Available'}
+                    </span>
+                  </td>
+                  <td className="seller-table-cell">
                     <label className="seller-toggle-switch">
                       <input
                         type="checkbox"
                         checked={product.inStock}
-                        onChange={() => handleStockToggle(product._id)}
+                        onChange={() => handleStockToggle(product._id, product.name, product.inStock)}
                       />
                       <span className="seller-toggle-slider"></span>
                     </label>
@@ -115,7 +300,7 @@ const ManageInventory = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="4" className="seller-no-products-cell">
+                <td colSpan="6" className="seller-no-products-cell">
                   <div className="seller-no-products-message">
                     <FiInbox size={48} />
                     <p>No products found</p>
@@ -146,19 +331,52 @@ const ManageInventory = () => {
                 <div className="seller-card-content">
                   <h3 className="seller-card-title">{product.name}</h3>
                   <span className="seller-card-category">{product.category}</span>
+                  
+                  {/* Mobile Quantity Controls */}
+                  <div className="seller-card-quantity-section">
+                    <span className="seller-quantity-label">Quantity:</span>
+                    <div className="seller-quantity-controls mobile">
+                      <button
+                        onClick={() => handleQuantityChange(product._id, -1)}
+                        className="seller-quantity-btn minus"
+                        disabled={(product.quantity || 0) <= 0}
+                      >
+                        <FiMinus />
+                      </button>
+                      <span className={`seller-quantity-value ${
+                        (product.quantity || 0) === 0 ? 'zero' : 
+                        (product.quantity || 0) <= 10 ? 'low' : ''
+                      }`}>
+                        {product.quantity || 0}
+                      </span>
+                      <button
+                        onClick={() => handleQuantityChange(product._id, 1)}
+                        className="seller-quantity-btn plus"
+                      >
+                        <FiPlus />
+                      </button>
+                    </div>
+                  </div>
+
                   <div className="seller-card-footer">
                     <span className="seller-card-price">
                       ${product.offerPrice || product.price}
                     </span>
                     <div className="seller-card-stock">
-                      <span className={`seller-stock-label ${product.inStock ? 'in-stock' : 'out-stock'}`}>
-                        {product.inStock ? 'In Stock' : 'Out of Stock'}
+                      <span className={`seller-stock-label ${
+                        (product.quantity || 0) === 0 ? 'out-stock' :
+                        (product.quantity || 0) <= 10 ? 'low-stock' :
+                        'in-stock'
+                      }`}>
+                        {(product.quantity || 0) === 0 ? 'Out of Stock' :
+                         (product.quantity || 0) <= 10 ? 'Low Stock' :
+                         'In Stock'}
                       </span>
                       <label className="seller-toggle-switch seller-toggle-small">
                         <input
                           type="checkbox"
                           checked={product.inStock}
-                          onChange={() => handleStockToggle(product._id)}
+                          onChange={() => handleStockToggle(product._id, product.name, product.inStock)}
                         />
                         <span className="seller-toggle-slider"></span>
                       </label>
